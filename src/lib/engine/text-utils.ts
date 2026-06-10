@@ -37,22 +37,39 @@ export const DEPTH_KEYWORDS = [
   "pipeline", "real-time", "low-latency",
 ];
 
+// NOTE: alternatives are ordered longest/most-specific first, because JS regex
+// alternation is ordered (not longest-match). This ensures a header like
+// "PROJECT EXPERIENCE" is consumed whole rather than matching just "Project".
 export const SECTION_PATTERNS: Record<string, RegExp> = {
-  summary: /\b(summary|objective|profile|about\s*me|professional\s+summary|career\s+objective)\b/i,
-  experience: /\b(experience|employment|work\s+history|professional\s+experience|work\s+experience|career\s+history)\b/i,
+  summary: /\b(professional\s+summary|career\s+objective|summary|objective|profile|about\s*me)\b/i,
+  experience: /\b(professional\s+experience|work\s+experience|work\s+history|career\s+history|employment|experience)\b/i,
   education: /\b(education|academic|qualifications?)\b/i,
-  skills: /\b(skills|technical\s+skills|technologies|tech\s+stack|competencies|expertise|proficiencies|core\s+skills)\b/i,
-  projects: /\b(projects?|personal\s+projects?|key\s+projects?|notable\s+projects?|select(?:ed)?\s+projects?|academic\s+projects?|project\s+experience|featured\s+work)\b/i,
+  skills: /\b(technical\s+skills|core\s+skills|tech\s+stack|technologies|competencies|expertise|proficiencies|skills)\b/i,
+  projects: /\b(personal\s+projects?|key\s+projects?|notable\s+projects?|select(?:ed)?\s+projects?|academic\s+projects?|project\s+experience|featured\s+work|projects?)\b/i,
   certifications: /\b(certifications?|certificates?|licen[sc]es?|credentials?)\b/i,
   achievements: /\b(achievements?|accomplishments?|awards?|honou?rs?|recognitions?)\b/i,
 };
 
-/** Is this line a standalone section header (short + keyword near the start)? */
+/** Section keywords anchored at line start (handles collapsed PDF lines). */
+const START_SECTION_RE =
+  /^\s*(professional\s+summary|career\s+objective|summary|objective|profile|work\s+experience|professional\s+experience|work\s+history|career\s+history|experience|employment|education|academic|qualifications?|technical\s+skills|tech\s+stack|core\s+skills|skills|technologies|competencies|expertise|proficiencies|project\s+experience|projects?|certifications?|certificates?|licen[sc]es?|achievements?|accomplishments?|awards?|honou?rs?)\b/i;
+
+/** Is this line a section boundary (standalone header, or keyword-led line)? */
 export function isSectionHeader(line: string, exclude?: RegExp): boolean {
   const l = line.trim();
-  if (l.length === 0 || l.length > 38) return false;
-  const wordCount = l.split(/\s+/).length;
-  if (wordCount > 4) return false;
+  if (l.length === 0) return false;
+
+  // Boundary if the line STARTS with a section keyword — works even when the
+  // header has trailing content on the same line (PDF layout collapse).
+  const startMatch = l.match(START_SECTION_RE);
+  if (startMatch) {
+    if (exclude && exclude.test(startMatch[0].trim())) return false;
+    return true;
+  }
+
+  // Otherwise only a short, keyword-led standalone line counts.
+  if (l.length > 38) return false;
+  if (l.split(/\s+/).length > 4) return false;
   for (const [, re] of Object.entries(SECTION_PATTERNS)) {
     if (exclude && exclude.source === re.source) continue;
     if (re.test(l)) return true;
@@ -102,10 +119,70 @@ export function countMatches(text: string, phrases: string[]): number {
   return n;
 }
 
-/** Detect lines/bullets that contain quantified impact (numbers, %, $, k/m). */
+const PHONE_LIKE_RE = /(\+?\d[\d\s().-]{7,}\d)/;
+
+/**
+ * Does a statement contain a *quantified achievement*? Works regardless of
+ * bullet formatting — looks for the meaning of a metric: percentages, money,
+ * "15000+", scaled numbers (10k / 2 million / 5 lakh), multipliers (3x),
+ * comma-grouped numbers, or any non-year integer (≥2 digits).
+ */
+export function hasImpactNumber(s: string): boolean {
+  if (PHONE_LIKE_RE.test(s) && s.split(/\s+/).length <= 4) return false; // phone/contact line
+  if (/\d+(?:\.\d+)?\s?%/.test(s)) return true; // 45%
+  if (/[$₹€£]\s?\d/.test(s)) return true; // $1,200 / ₹50000
+  if (/\b\d[\d,]*\s?\+/.test(s)) return true; // 15000+ / 1,000+
+  if (/\b\d+(?:\.\d+)?\s?(k|m|b|mn|bn|million|billion|thousand|lakh|lakhs|cr|crore|crores)\b/i.test(s)) return true;
+  if (/\b\d+(?:\.\d+)?\s?x\b/i.test(s)) return true; // 3x
+  if (/\b\d{1,3}(?:,\d{3})+\b/.test(s)) return true; // 1,000,000
+  // any standalone 2-7 digit integer that isn't a 4-digit calendar year
+  for (const n of s.match(/\b\d{2,7}\b/g) ?? []) {
+    const v = parseInt(n, 10);
+    if (!(n.length === 4 && v >= 1900 && v <= 2099)) return true;
+  }
+  return false;
+}
+
+/** Count quantified-achievement statements across the whole resume. */
+export function countQuantifiedStatements(text: string): number {
+  const stmts = text
+    .split(/\n|(?<=[.!?])\s+/)
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0);
+  let n = 0;
+  for (const s of stmts) {
+    if (/@|linkedin\.com|github\.com/i.test(s)) continue; // skip contact lines
+    if (hasImpactNumber(s)) n++;
+  }
+  return n;
+}
+
+/** Legacy line-based count (kept for compatibility). */
 export function quantifiedCount(lines: string[]): number {
-  const re = /(\$\s?\d|\d+\s?%|\d+\s?(k|m|b|million|billion|thousand)\b|\b\d{2,}\b|\d+x\b)/i;
-  return lines.filter((l) => re.test(l)).length;
+  return lines.filter((l) => hasImpactNumber(l)).length;
+}
+
+/**
+ * Extract the text region belonging to a section, using string indices so it
+ * survives PDF layout collapse (header + content merged onto one line). Returns
+ * the content from just after the header keyword to the next section header.
+ */
+export function sectionRegion(text: string, headerRe: RegExp): string | null {
+  const m = headerRe.exec(text);
+  if (!m) return null;
+  const startIdx = m.index + m[0].length;
+  const rest = text.slice(startIdx);
+  const lines = rest.split("\n");
+  let consumed = 0;
+  let endRel = rest.length;
+  for (let i = 0; i < lines.length; i++) {
+    if (i > 0 && isSectionHeader(lines[i], headerRe)) {
+      endRel = consumed;
+      break;
+    }
+    consumed += lines[i].length + 1;
+  }
+  return rest.slice(0, endRel).replace(/^[:\s-]+/, "").trim();
 }
 
 const EDU_CONTEXT_RE = /\b(b\.?tech|b\.?e\.?|b\.?sc|b\.?a\.?|bca|m\.?tech|m\.?sc|m\.?a\.?|mba|bachelor|master|phd|diploma|university|college|institute|school|iit|nit|gpa|cgpa|degree|graduat)/i;

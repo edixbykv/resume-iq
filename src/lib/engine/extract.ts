@@ -8,12 +8,13 @@ import {
   GITHUB_RE,
   URL_RE,
   SECTION_PATTERNS,
+  sectionRegion,
   isSectionHeader,
   toLines,
   words,
   wordCount,
   bulletLines,
-  quantifiedCount,
+  countQuantifiedStatements,
   estimateExperienceYears,
   highestDegree,
 } from "./text-utils";
@@ -68,24 +69,67 @@ function extractName(lines: string[], email: string | null): string | null {
   return null;
 }
 
-function extractListSection(text: string, sectionRe: RegExp): string[] {
-  const lines = text.split("\n");
-  const out: string[] = [];
-  let capturing = false;
-  for (const raw of lines) {
-    const line = raw.trim();
-    if (sectionRe.test(line) && line.length < 40) {
-      capturing = true;
-      continue;
-    }
-    if (capturing) {
-      // stop only at a genuine next section header (short, keyword-led line)
-      if (isSectionHeader(line, sectionRe)) break;
-      if (line.length > 2) out.push(line.replace(/^[•\-*▪◦‣·\d.)\s]+/, "").trim());
-      if (out.length >= 12) break;
-    }
+const BULLET_PREFIX_RE = /^[•\-*▪◦‣·●▸■○◆–—\d.)\s]+/;
+
+/**
+ * Pull discrete entries from a section, resilient to PDF layout collapse.
+ * Splits the section region by lines first; if the region collapsed onto a
+ * single line, falls back to splitting on bullet glyphs / multi-space / pipes /
+ * "Title:" patterns.
+ */
+function extractSectionEntries(text: string, sectionRe: RegExp): string[] {
+  const region = sectionRegion(text, sectionRe);
+  if (!region) return [];
+
+  let entries = region
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => l.length > 2)
+    .map((l) => l.replace(BULLET_PREFIX_RE, "").trim())
+    .filter(Boolean);
+
+  // Region collapsed onto ~one line → split semantically.
+  if (entries.length <= 1 && region.length > 60) {
+    const byGlyph = region
+      .split(/\s*[•▪◦‣·●▸■|]\s*|\s{2,}/)
+      .map((s) => s.replace(BULLET_PREFIX_RE, "").trim())
+      .filter((s) => s.length > 3);
+    const byTitle = [...region.matchAll(/([A-Z][\w .&/+'-]{2,48}?)\s*[:–—-]\s/g)].map((m) => m[1].trim());
+    const best = [byGlyph, byTitle].sort((a, b) => b.length - a.length)[0];
+    if (best.length > entries.length) entries = best;
   }
-  return out.filter(Boolean);
+
+  // Drop short header remnants (e.g. a leftover "EXPERIENCE" / "SKILLS" token).
+  entries = entries.filter((e) => !(e.length <= 15 && isSectionHeader(e)));
+
+  return [...new Set(entries)].slice(0, 12);
+}
+
+const PROJECT_VERB = /(built|developed|created|designed|implemented|engineered|architected|launched|programmed|made)/i;
+const PROJECT_NOUN = /(app|application|platform|system|website|web ?app|tool|bot|api|dashboard|pipeline|model|game|portal|engine|service|extension|library|clone)/i;
+
+/**
+ * Semantic project detection — finds project-like statements anywhere in the
+ * resume (verb + artifact, or a "Title:" line that mentions tech), used when
+ * there's no explicit Projects section or the section parse came up empty.
+ */
+function semanticProjects(text: string): string[] {
+  const out: string[] = [];
+  for (const raw of text.split("\n")) {
+    const line = raw.replace(BULLET_PREFIX_RE, "").trim();
+    if (line.length < 8 || line.length > 200) continue;
+    const verbNoun = PROJECT_VERB.test(line) && PROJECT_NOUN.test(line);
+    const titled = /^[A-Z][\w .&/+'-]{2,48}?\s*[:–—-]\s/.test(line) && PROJECT_NOUN.test(line);
+    if (verbNoun || titled) out.push(line);
+  }
+  return [...new Set(out)].slice(0, 8);
+}
+
+/** Project extraction: explicit section first, then semantic fallback. */
+function extractProjects(text: string): string[] {
+  const fromSection = extractSectionEntries(text, SECTION_PATTERNS.projects);
+  if (fromSection.length > 0) return fromSection;
+  return semanticProjects(text);
 }
 
 function extractKeywords(text: string, skills: ExtractedSkill[]): string[] {
@@ -133,9 +177,12 @@ export function extractFields(text: string, pages: number): ResumeFields {
     ? Math.max(1, Math.round((text.match(/\b(19|20)\d{2}\b/g) ?? []).length / 2))
     : 0;
 
-  const certifications = extractListSection(text, SECTION_PATTERNS.certifications);
-  const projects = extractListSection(text, SECTION_PATTERNS.projects);
-  const achievements = extractListSection(text, SECTION_PATTERNS.achievements);
+  const certifications = extractSectionEntries(text, SECTION_PATTERNS.certifications);
+  const projects = extractProjects(text);
+  const achievements = extractSectionEntries(text, SECTION_PATTERNS.achievements);
+
+  // If projects were found semantically (no explicit header), reflect that.
+  if (projects.length > 0) sections.projects = true;
 
   return {
     name: extractName(lines, email),
@@ -156,7 +203,7 @@ export function extractFields(text: string, pages: number): ResumeFields {
     stats: {
       wordCount: wordCount(text),
       bulletCount: bullets.length,
-      quantifiedBullets: quantifiedCount(bullets),
+      quantifiedBullets: countQuantifiedStatements(text),
       actionVerbs,
       weakVerbs,
       pages,
