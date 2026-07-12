@@ -1,6 +1,6 @@
 import { asScore } from "../utils";
 import { SKILLS } from "./skills-db";
-import { words, estimateExperienceYears, highestDegree } from "./text-utils";
+import { words, highestDegree } from "./text-utils";
 import type { ResumeFields, JdMatchResult } from "./types";
 
 /** Extract the skills a JD asks for, using the same taxonomy as the resume. */

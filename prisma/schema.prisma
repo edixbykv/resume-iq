@@ -24,6 +24,7 @@ model User {
   accounts Account[]
   sessions Session[]
   resumes  Resume[]
+  userResumes UserResume[]
 }
 
 model Account {
@@ -83,3 +84,17 @@ enum Plan {
   FREE
   PREMIUM
 }
+
+model UserResume {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String   @default("Untitled Resume")
+  content   Json     // stores the resume JSON structure
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+

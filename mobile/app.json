@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "ResumeIQ",
+    "slug": "resumeiq",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "description": "AI resume analysis and builder for job seekers",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.kvai.resumeiq",
+      "versionCode": 1,
+      "permissions": [
+        "INTERNET"
+      ],
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "3bf693c7-9643-4a1a-8062-c3c07c5f4e76"
+      }
+    }
+  }
+}

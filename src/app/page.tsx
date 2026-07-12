@@ -3,11 +3,9 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  Sparkles, Upload, BrainCircuit, UserCheck, Target, TrendingUp,
-  FileText, Globe, GraduationCap, IndianRupee,
-  ShieldCheck, BarChart3, ArrowRight, Check, Zap,
+  Sparkles, Upload, BrainCircuit, UserCheck, Target,
+  FileText, ArrowRight, Zap,
 } from "lucide-react";
-import { Github, Linkedin } from "@/components/site/brand-icons";
 import { Navbar } from "@/components/site/navbar";
 import { Footer } from "@/components/site/footer";
 import { Button } from "@/components/ui/button";
@@ -20,18 +18,10 @@ const fadeUp = {
 };
 
 const features = [
-  { icon: BrainCircuit, title: "AI Resume Analyzer", desc: "10 sub-scores — ATS, skills, experience, leadership, technical depth & more.", tag: "Core" },
-  { icon: ShieldCheck, title: "ATS Compatibility", desc: "Detect parsing risks, missing sections & keyword gaps with fixes.", tag: "Free" },
-  { icon: Target, title: "Job Description Match", desc: "Paste any JD for a match %, missing skills and gap analysis.", tag: "Core" },
-  { icon: UserCheck, title: "Recruiter Simulation", desc: "Would I shortlist? YES / MAYBE / NO with hiring probability.", tag: "Premium" },
-  { icon: FileText, title: "Resume Rewrite Engine", desc: "Weak bullets rewritten into quantified, recruiter-friendly impact.", tag: "Premium" },
-  { icon: IndianRupee, title: "Salary Intelligence", desc: "India, remote & global salary bands based on your real profile.", tag: "Premium" },
-  { icon: TrendingUp, title: "Skill Gap & 90-Day Plan", desc: "Target a role, see missing skills and a phased upskilling plan.", tag: "Premium" },
-  { icon: Github, title: "GitHub Analyzer", desc: "Live repo quality, stars, languages & developer credibility score.", tag: "Core" },
-  { icon: Linkedin, title: "LinkedIn Optimizer", desc: "Headline, About & branding scored with optimization tips.", tag: "Core" },
-  { icon: Globe, title: "Portfolio Audit", desc: "Real SEO, mobile, performance & accessibility checks of your site.", tag: "Core" },
-  { icon: GraduationCap, title: "Interview Prep", desc: "Technical, behavioral & project questions from your resume.", tag: "Premium" },
-  { icon: BarChart3, title: "Benchmark & Brand Score", desc: "Percentile vs peers + a unified personal brand score.", tag: "Premium" },
+  { icon: BrainCircuit, title: "AI Resume Analyzer", desc: "Get an instant recruiter-grade analysis with 10 detailed sub-scores.", tag: "Core" },
+  { icon: Target, title: "Job Description Match", desc: "Paste any job description to get your match percentage and fix gaps.", tag: "Core" },
+  { icon: FileText, title: "Resume Builder", desc: "Create high-converting resumes with beautiful, print-ready templates.", tag: "New" },
+  { icon: UserCheck, title: "Recruiter Simulator", desc: "Find out if a recruiter would shortlist you and check your hiring probability.", tag: "Core" },
 ];
 
 const steps = [
@@ -76,7 +66,10 @@ export default function Home() {
               </Button>
             </motion.div>
             <motion.p variants={fadeUp} custom={4} className="mt-4 text-xs text-muted-foreground">
-              No sign-up required · PDF &amp; DOCX · Your file never leaves the request
+              No sign-up required · PDF & DOCX · Your privacy matters —{" "}
+              <Link href="/privacy" className="underline underline-offset-2 hover:text-foreground">
+                see how we handle data
+              </Link>
             </motion.p>
           </motion.div>
 
@@ -159,41 +152,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Pricing */}
-      <section id="pricing" className="mx-auto max-w-5xl scroll-mt-20 px-4 py-20 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <Badge variant="secondary" className="mb-3">Pricing</Badge>
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Start free. Upgrade when ready.</h2>
-        </div>
-        <div className="mt-12 grid gap-6 md:grid-cols-2">
-          <Card className="p-8">
-            <h3 className="text-lg font-semibold">Free</h3>
-            <p className="mt-1 text-sm text-muted-foreground">For a quick health check</p>
-            <div className="mt-4 text-4xl font-bold">₹0</div>
-            <ul className="mt-6 space-y-3 text-sm">
-              {["Overall resume score", "ATS compatibility scan", "Skill & section detection", "GitHub & portfolio audit"].map((x) => (
-                <li key={x} className="flex items-center gap-2"><Check className="size-4 text-emerald-500" /> {x}</li>
-              ))}
-            </ul>
-            <Button asChild variant="outline" className="mt-8 w-full"><Link href="/analyze">Get started</Link></Button>
-          </Card>
 
-          <Card className="relative overflow-hidden border-primary/40 p-8 shadow-lg shadow-primary/10">
-            <div className="absolute right-0 top-0 rounded-bl-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-3 py-1 text-xs font-semibold text-white">
-              Most popular
-            </div>
-            <h3 className="text-lg font-semibold">Premium</h3>
-            <p className="mt-1 text-sm text-muted-foreground">Full career intelligence</p>
-            <div className="mt-4 text-4xl font-bold">₹499<span className="text-base font-normal text-muted-foreground">/mo</span></div>
-            <ul className="mt-6 space-y-3 text-sm">
-              {["Everything in Free", "Recruiter simulation", "Salary intelligence", "Skill-gap 90-day plan", "Resume rewrite engine", "Downloadable PDF report"].map((x) => (
-                <li key={x} className="flex items-center gap-2"><Check className="size-4 text-primary" /> {x}</li>
-              ))}
-            </ul>
-            <Button asChild variant="gradient" className="mt-8 w-full"><Link href="/analyze">Analyze now</Link></Button>
-          </Card>
-        </div>
-      </section>
 
       {/* CTA */}
       <section className="px-4 pb-24 sm:px-6 lg:px-8">

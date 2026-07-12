@@ -6,8 +6,6 @@ import { analyzeAts } from "./ats";
 import { simulateRecruiter } from "./recruiter";
 import { buildCareerPath, estimateSalary, benchmark } from "./career";
 import { enrichWithAI, fallbackInsights, aiAvailable } from "./ai";
-import { matchJobDescription } from "./jd-match";
-import { analyzeSkillGap } from "./skill-gap";
 import { gradeFor, type AnalysisResult } from "./types";
 
 export * from "./types";

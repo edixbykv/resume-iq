@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Textarea, Input } from "@/components/ui/misc";
+import { Textarea } from "@/components/ui/misc";
 import { ScoreRing } from "./score-ring";
 import { SubScoreCard } from "./sub-score-card";
 import { WebTools } from "./web-tools";

@@ -1,4 +1,5 @@
 import { asScore } from "../utils";
+import { safeFetch } from "../ssrf";
 
 export interface PortfolioReport {
   url: string;
@@ -28,14 +29,7 @@ export async function analyzePortfolio(rawUrl: string): Promise<PortfolioReport>
   };
 
   try {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 12000);
-    const res = await fetch(url, {
-      signal: controller.signal,
-      headers: { "User-Agent": "Mozilla/5.0 (compatible; KVAI-Resume-Bot/1.0)" },
-      redirect: "follow",
-    });
-    clearTimeout(timer);
+    const res = await safeFetch(url);
     if (!res.ok) return fail;
     const html = await res.text();
     const lower = html.toLowerCase();

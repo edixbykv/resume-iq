@@ -1,4 +1,4 @@
-import { SKILLS, SKILL_INDEX, type SkillDef } from "./skills-db";
+import { SKILLS, type SkillDef } from "./skills-db";
 import {
   ACTION_VERBS,
   WEAK_VERBS,

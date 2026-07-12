@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Menu, X, Sparkles } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { Menu, X, Sparkles, LayoutDashboard, FileEdit } from "lucide-react";
 import { Logo } from "./logo";
 import { ThemeToggle } from "./theme-toggle";
 import { Button } from "@/components/ui/button";
@@ -10,11 +11,13 @@ import { Button } from "@/components/ui/button";
 const links = [
   { href: "/#features", label: "Features" },
   { href: "/#how", label: "How it works" },
-  { href: "/#pricing", label: "Pricing" },
 ];
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const { data: session } = useSession();
+  const authed = !!session;
+
   return (
     <header className="no-print sticky top-0 z-50 w-full border-b border-border/60 glass">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -28,15 +31,50 @@ export function Navbar() {
               {l.label}
             </Link>
           ))}
+          {authed && (
+            <>
+              <Link href="/dashboard" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+                Dashboard
+              </Link>
+              <Link href="/builder" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+                Builder
+              </Link>
+            </>
+          )}
         </nav>
 
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          <Button asChild variant="gradient" size="sm" className="hidden sm:inline-flex">
-            <Link href="/analyze">
-              <Sparkles className="size-4" /> Analyze Resume
-            </Link>
-          </Button>
+          {authed ? (
+            <>
+              <Button asChild variant="outline" size="sm" className="hidden sm:inline-flex">
+                <Link href="/builder">
+                  <FileEdit className="size-4" /> Builder
+                </Link>
+              </Button>
+              <Button asChild variant="outline" size="sm" className="hidden sm:inline-flex">
+                <Link href="/dashboard">
+                  <LayoutDashboard className="size-4" /> Dashboard
+                </Link>
+              </Button>
+              <Button asChild variant="gradient" size="sm" className="hidden sm:inline-flex">
+                <Link href="/analyze">
+                  <Sparkles className="size-4" /> Analyze
+                </Link>
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
+                <Link href="/signin">Sign in</Link>
+              </Button>
+              <Button asChild variant="gradient" size="sm" className="hidden sm:inline-flex">
+                <Link href="/analyze">
+                  <Sparkles className="size-4" /> Analyze Resume
+                </Link>
+              </Button>
+            </>
+          )}
           <button className="md:hidden" aria-label="Menu" onClick={() => setOpen((o) => !o)}>
             {open ? <X /> : <Menu />}
           </button>
@@ -51,11 +89,28 @@ export function Navbar() {
                 {l.label}
               </Link>
             ))}
-            <Button asChild variant="gradient" className="mt-2">
-              <Link href="/analyze" onClick={() => setOpen(false)}>
-                <Sparkles className="size-4" /> Analyze Resume
-              </Link>
-            </Button>
+            {authed ? (
+              <>
+                <Link href="/dashboard" onClick={() => setOpen(false)} className="text-sm font-medium text-muted-foreground">Dashboard</Link>
+                <Link href="/builder" onClick={() => setOpen(false)} className="text-sm font-medium text-muted-foreground">Builder</Link>
+                <Button asChild variant="gradient" className="mt-2">
+                  <Link href="/analyze" onClick={() => setOpen(false)}>
+                    <Sparkles className="size-4" /> Analyze
+                  </Link>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button asChild variant="outline" className="mt-2">
+                  <Link href="/signin" onClick={() => setOpen(false)}>Sign in</Link>
+                </Button>
+                <Button asChild variant="gradient" className="mt-2">
+                  <Link href="/analyze" onClick={() => setOpen(false)}>
+                    <Sparkles className="size-4" /> Analyze Resume
+                  </Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       )}
