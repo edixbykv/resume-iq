@@ -27,7 +27,9 @@ export async function POST(req: NextRequest) {
     console.log(`[OTP] Generated verification code ${code} for ${cleanEmail}`);
 
     // Send real email using Resend API key
-    const resendApiKey = process.env.RESEND_API_KEY;
+    const resendApiKey = process.env.RESEND_API_KEY?.trim();
+    const resendFromEmail = process.env.RESEND_FROM_EMAIL?.trim() || "onboarding@resend.dev";
+
     if (resendApiKey) {
       try {
         const mailRes = await fetch("https://api.resend.com/emails", {
@@ -37,7 +39,7 @@ export async function POST(req: NextRequest) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            from: `ResumeIQ <${process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev"}>`,
+            from: `ResumeIQ <${resendFromEmail}>`,
             to: cleanEmail,
             subject: "Your ResumeIQ Verification Code",
             html: `
@@ -59,14 +61,24 @@ export async function POST(req: NextRequest) {
         if (!mailRes.ok) {
           const errText = await mailRes.text();
           console.error("Resend API response failure:", errText);
+          let parsedError = errText;
+          try {
+            const errObj = JSON.parse(errText);
+            parsedError = errObj.message || errText;
+          } catch {
+            // ignore
+          }
+          return NextResponse.json({ error: `Resend API Error: ${parsedError}` }, { status: 400 });
         } else {
           console.log(`[Resend] Successfully sent OTP code to ${cleanEmail}`);
         }
-      } catch (mailErr) {
+      } catch (mailErr: any) {
         console.error("Resend API email sending failed:", mailErr);
+        return NextResponse.json({ error: `Connection failed: ${mailErr.message || mailErr}` }, { status: 500 });
       }
     } else {
       console.warn("[Resend] RESEND_API_KEY environment variable is not configured. Falling back to console log code.");
+      return NextResponse.json({ error: "Resend API key is missing on the server. Please add it to your environment variables." }, { status: 500 });
     }
 
     return NextResponse.json({
