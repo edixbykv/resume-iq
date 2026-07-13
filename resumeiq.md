@@ -11,6 +11,7 @@ ResumeIQ is a premium, high-performance career intelligence platform built for W
 - **Custom Stylings**: Toggle between premium font families (`font-sans`, `font-serif`, `font-mono`), color themes (`indigo`, `rose`, `emerald`, `amber`, `slate`), and spacing margins (`compact`, `normal`, `loose`).
 - **ATS-Safe Templates**: Clean, grid-based layouts designed according to executive recruitment practices.
 - **Print Optimization**: Automatic print styling hides menus, layout controls, and navbars. Removes scrolling restrictions to produce clean, page-truncated PDFs.
+- **Inline Flow Navigation**: Integrated step-by-step Back and Next buttons at the bottom of the editor to guide users seamlessly.
 
 ### 2. Job-Specific AI Optimizer
 - **Job Description Alignment**: Paste any job description to trigger the AI optimizer.
@@ -31,6 +32,7 @@ ResumeIQ is a premium, high-performance career intelligence platform built for W
 
 ### 5. Passwordless Email OTP Login
 - **Seamless Auth**: Generates a 6-digit OTP code log stored in the database.
+- **Resend Integration**: Sends dynamic, styled account verification emails directly to the user's inbox via Resend.
 - **Auto-Account Creation**: Automatically provisions User accounts on the fly when verification succeeds.
 - **Local Testing Helper**: Displays the code in a toast overlay for easy validation in sandbox testing environments.
 
@@ -45,7 +47,7 @@ ResumeIQ is a premium, high-performance career intelligence platform built for W
 ### 8. Premium Mobile Experience
 - **Fluid WebView**: Wraps the live site in a high-speed container with top status bar safe area paddings.
 - **Brand Splash Screen**: Glowing logo badge displaying "build by kvai.in" at the bottom with a 2.5-second load timer.
-- **Custom App Icon**: Modern dark-theme app icon generated and mapped across mobile build configurations.
+- **Custom App Icon**: Premium glowing neon purple and blue 'IQ' monogram metallic badge icon generated and mapped across mobile build configurations.
 
 ---
 
