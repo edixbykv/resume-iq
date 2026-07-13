@@ -62,7 +62,7 @@ export default function Home() {
                 <Link href="/analyze"><Zap className="size-4" /> Analyze my resume — free</Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
-                <Link href="/#features">Explore features</Link>
+                <Link href="/builder"><FileText className="size-4 mr-2" /> Create from scratch</Link>
               </Button>
             </motion.div>
             <motion.p variants={fadeUp} custom={4} className="mt-4 text-xs text-muted-foreground">

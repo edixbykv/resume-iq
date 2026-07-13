@@ -9,6 +9,7 @@ import { ThemeToggle } from "./theme-toggle";
 import { Button } from "@/components/ui/button";
 
 const links = [
+  { href: "/builder", label: "Create Resume" },
   { href: "/#features", label: "Features" },
   { href: "/#how", label: "How it works" },
 ];
@@ -32,14 +33,9 @@ export function Navbar() {
             </Link>
           ))}
           {authed && (
-            <>
-              <Link href="/dashboard" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-                Dashboard
-              </Link>
-              <Link href="/builder" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-                Builder
-              </Link>
-            </>
+            <Link href="/dashboard" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              Dashboard
+            </Link>
           )}
         </nav>
 
@@ -65,6 +61,11 @@ export function Navbar() {
             </>
           ) : (
             <>
+              <Button asChild variant="outline" size="sm" className="hidden sm:inline-flex">
+                <Link href="/builder">
+                  <FileEdit className="size-4" /> Create Resume
+                </Link>
+              </Button>
               <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
                 <Link href="/signin">Sign in</Link>
               </Button>
@@ -92,7 +93,6 @@ export function Navbar() {
             {authed ? (
               <>
                 <Link href="/dashboard" onClick={() => setOpen(false)} className="text-sm font-medium text-muted-foreground">Dashboard</Link>
-                <Link href="/builder" onClick={() => setOpen(false)} className="text-sm font-medium text-muted-foreground">Builder</Link>
                 <Button asChild variant="gradient" className="mt-2">
                   <Link href="/analyze" onClick={() => setOpen(false)}>
                     <Sparkles className="size-4" /> Analyze
@@ -101,6 +101,11 @@ export function Navbar() {
               </>
             ) : (
               <>
+                <Button asChild variant="outline" className="mt-2">
+                  <Link href="/builder" onClick={() => setOpen(false)}>
+                    <FileEdit className="size-4" /> Create Resume
+                  </Link>
+                </Button>
                 <Button asChild variant="outline" className="mt-2">
                   <Link href="/signin" onClick={() => setOpen(false)}>Sign in</Link>
                 </Button>
