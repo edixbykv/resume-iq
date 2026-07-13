@@ -64,13 +64,16 @@ providers.push(
       const log = await prisma.otpLog.findFirst({
         where: {
           email,
-          code,
-          expiresAt: { gt: new Date() },
+          code: code.trim(),
         },
         orderBy: { createdAt: "desc" },
       });
 
       if (!log) return null;
+
+      // Timezone-safe JavaScript verification: check if generated within past 15 mins
+      const ageMs = Date.now() - new Date(log.createdAt).getTime();
+      if (ageMs > 15 * 60 * 1000) return null;
 
       // Mark OTP as verified
       try {
