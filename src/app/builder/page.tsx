@@ -26,6 +26,7 @@ export default function BuilderPage() {
   const { status } = useSession();
   const [resume, setResume] = useState<BuilderResume>(createEmptyResume);
   const [activeTab, setActiveTab] = useState("contact");
+  const [viewMode, setViewMode] = useState<"editor" | "preview">("editor");
 
   const TABS_ORDER = ["contact", "summary", "experience", "education", "skills", "projects", "certifications", "template", "optimize"];
 
@@ -452,7 +453,7 @@ export default function BuilderPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#070a13] text-slate-100">
+    <div className="flex min-h-screen flex-col bg-background text-foreground">
       <Navbar />
       <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
@@ -471,18 +472,42 @@ export default function BuilderPage() {
             </div>
             <div className="flex items-center gap-2">
               {saved && <Badge variant="success">Saved</Badge>}
-              <Button variant="outline" size="sm" onClick={autoSave} disabled={saving}>
+              <Button variant="outline" onClick={autoSave} disabled={saving}>
                 <Save className="size-4" /> {saving ? "Saving..." : "Save"}
               </Button>
-              <Button variant="gradient" size="sm" onClick={triggerPayment}>
+              <Button variant="gradient" onClick={triggerPayment}>
                 <Download className="size-4" /> Export PDF
               </Button>
             </div>
           </div>
 
+          {/* Mobile Toggle View */}
+          <div className="flex rounded-lg bg-muted p-1 lg:hidden mb-6 no-print">
+            <button
+              onClick={() => setViewMode("editor")}
+              className={`flex-1 rounded-md py-2 text-xs font-semibold transition-all ${
+                viewMode === "editor"
+                  ? "bg-background text-foreground shadow-sm font-bold"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Editor Form
+            </button>
+            <button
+              onClick={() => setViewMode("preview")}
+              className={`flex-1 rounded-md py-2 text-xs font-semibold transition-all ${
+                viewMode === "preview"
+                  ? "bg-background text-foreground shadow-sm font-bold"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              Resume Preview
+            </button>
+          </div>
+
           <div className="grid gap-6 lg:grid-cols-2 print:block">
             {/* Editor */}
-            <div className="space-y-4 no-print">
+            <div className={`space-y-4 no-print ${viewMode === "editor" ? "block" : "hidden lg:block"}`}>
               <Tabs value={activeTab} onValueChange={setActiveTab}>
                 <TabsList className="flex-wrap">
                   <TabsTrigger value="contact">Contact</TabsTrigger>
@@ -498,13 +523,13 @@ export default function BuilderPage() {
 
                 <TabsContent value="contact" className="space-y-4 pt-4">
                   <Card className="p-5 space-y-3 bg-card border border-border hover:border-primary/20 transition-all shadow-md">
-                    <InputField label="Full Name" value={resume.contact.fullName} onChange={(v) => updateContact("fullName", v)} />
-                    <InputField label="Email" type="email" value={resume.contact.email} onChange={(v) => updateContact("email", v)} />
-                    <InputField label="Phone" value={resume.contact.phone} onChange={(v) => updateContact("phone", v)} />
-                    <InputField label="Location" value={resume.contact.location} onChange={(v) => updateContact("location", v)} />
-                    <InputField label="LinkedIn URL" value={resume.contact.linkedin ?? ""} onChange={(v) => updateContact("linkedin", v)} />
-                    <InputField label="GitHub URL" value={resume.contact.github ?? ""} onChange={(v) => updateContact("github", v)} />
-                    <InputField label="Website" value={resume.contact.website ?? ""} onChange={(v) => updateContact("website", v)} />
+                    <InputField label="Full Name" placeholder="e.g. John Doe" value={resume.contact.fullName} onChange={(v) => updateContact("fullName", v)} />
+                    <InputField label="Email" type="email" placeholder="e.g. john.doe@gmail.com" value={resume.contact.email} onChange={(v) => updateContact("email", v)} />
+                    <InputField label="Phone" placeholder="e.g. +91 98765 43210" value={resume.contact.phone} onChange={(v) => updateContact("phone", v)} />
+                    <InputField label="Location" placeholder="e.g. New Delhi, India" value={resume.contact.location} onChange={(v) => updateContact("location", v)} />
+                    <InputField label="LinkedIn URL" placeholder="e.g. linkedin.com/in/johndoe" value={resume.contact.linkedin ?? ""} onChange={(v) => updateContact("linkedin", v)} />
+                    <InputField label="GitHub URL" placeholder="e.g. github.com/johndoe" value={resume.contact.github ?? ""} onChange={(v) => updateContact("github", v)} />
+                    <InputField label="Website" placeholder="e.g. https://johndoe.com" value={resume.contact.website ?? ""} onChange={(v) => updateContact("website", v)} />
                   </Card>
                 </TabsContent>
 
@@ -534,12 +559,12 @@ export default function BuilderPage() {
                       </div>
                       <div className="space-y-3">
                         <div className="grid gap-3 sm:grid-cols-2">
-                          <InputField label="Company" value={exp.company} onChange={(v) => updateExperience(exp.id, "company", v)} />
-                          <InputField label="Title" value={exp.title} onChange={(v) => updateExperience(exp.id, "title", v)} />
+                          <InputField label="Company" placeholder="e.g. Google" value={exp.company} onChange={(v) => updateExperience(exp.id, "company", v)} />
+                          <InputField label="Title" placeholder="e.g. Software Engineer" value={exp.title} onChange={(v) => updateExperience(exp.id, "title", v)} />
                         </div>
                         <div className="grid gap-3 sm:grid-cols-2">
-                          <InputField label="Start Date" value={exp.startDate} onChange={(v) => updateExperience(exp.id, "startDate", v)} />
-                          <InputField label="End Date" value={exp.endDate ?? ""} onChange={(v) => updateExperience(exp.id, "endDate", v)} />
+                          <InputField label="Start Date" placeholder="e.g. July 2024" value={exp.startDate} onChange={(v) => updateExperience(exp.id, "startDate", v)} />
+                          <InputField label="End Date" placeholder="e.g. Present" value={exp.endDate ?? ""} onChange={(v) => updateExperience(exp.id, "endDate", v)} />
                         </div>
                         <label className="flex items-center gap-2 text-sm">
                           <input
@@ -587,16 +612,16 @@ export default function BuilderPage() {
                         </Button>
                       </div>
                       <div className="space-y-3">
-                        <InputField label="Institution" value={edu.institution} onChange={(v) => updateEducation(edu.id, "institution", v)} />
+                        <InputField label="Institution" placeholder="e.g. Delhi University" value={edu.institution} onChange={(v) => updateEducation(edu.id, "institution", v)} />
                         <div className="grid gap-3 sm:grid-cols-2">
-                          <InputField label="Degree" value={edu.degree} onChange={(v) => updateEducation(edu.id, "degree", v)} />
-                          <InputField label="Field of Study" value={edu.field ?? ""} onChange={(v) => updateEducation(edu.id, "field", v)} />
+                          <InputField label="Degree" placeholder="e.g. B.Tech" value={edu.degree} onChange={(v) => updateEducation(edu.id, "degree", v)} />
+                          <InputField label="Field of Study" placeholder="e.g. Computer Science" value={edu.field ?? ""} onChange={(v) => updateEducation(edu.id, "field", v)} />
                         </div>
                         <div className="grid gap-3 sm:grid-cols-2">
-                          <InputField label="Start Date" value={edu.startDate} onChange={(v) => updateEducation(edu.id, "startDate", v)} />
-                          <InputField label="End Date" value={edu.endDate} onChange={(v) => updateEducation(edu.id, "endDate", v)} />
+                          <InputField label="Start Date" placeholder="e.g. 2020" value={edu.startDate} onChange={(v) => updateEducation(edu.id, "startDate", v)} />
+                          <InputField label="End Date" placeholder="e.g. 2024" value={edu.endDate} onChange={(v) => updateEducation(edu.id, "endDate", v)} />
                         </div>
-                        <InputField label="GPA (optional)" value={edu.gpa ?? ""} onChange={(v) => updateEducation(edu.id, "gpa", v)} />
+                        <InputField label="GPA (optional)" placeholder="e.g. 8.5 CGPA" value={edu.gpa ?? ""} onChange={(v) => updateEducation(edu.id, "gpa", v)} />
                       </div>
                     </Card>
                   ))}
@@ -649,38 +674,39 @@ export default function BuilderPage() {
                         </Button>
                       </div>
                       <div className="space-y-3">
-                        <InputField label="Project Name" value={proj.name} onChange={(v) => updateProject(proj.id, "name", v)} />
-                        <div className="space-y-1">
-                          <label className="block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Description</label>
-                          <textarea
-                            className="min-h-[80px] w-full rounded-lg border border-input bg-background p-2.5 text-xs text-foreground placeholder-muted-foreground shadow-sm transition-all focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                            value={proj.description}
-                            onChange={(e) => updateProject(proj.id, "description", e.target.value)}
-                          />
-                        </div>
-                        <InputField label="Technologies (comma-separated)" value={proj.technologies.join(", ")} onChange={(v) => updateProject(proj.id, "technologies", v.split(",").map((s) => s.trim()))} />
-                        <InputField label="URL (optional)" value={proj.url ?? ""} onChange={(v) => updateProject(proj.id, "url", v)} />
-                      </div>
-                    </Card>
-                  ))}
-                  <Button variant="outline" className="w-full" onClick={addProject}>
-                    <Plus className="size-4" /> Add Project
-                  </Button>
-                </TabsContent>
-
-                <TabsContent value="certifications" className="space-y-4 pt-4">
-                  {resume.certifications.map((cert) => (
-                    <Card key={cert.id} className="p-5 bg-card border border-border hover:border-primary/20 transition-all shadow-md">
-                      <div className="mb-3 flex items-center justify-between">
-                        <span className="text-sm font-medium">{cert.name || "New Certification"}</span>
-                        <Button variant="ghost" size="sm" onClick={() => removeCertification(cert.id)}>
-                          <Trash2 className="size-4 text-destructive" />
-                        </Button>
-                      </div>
-                      <div className="space-y-3">
-                        <InputField label="Name" value={cert.name} onChange={(v) => updateCertification(cert.id, "name", v)} />
-                        <InputField label="Issuer" value={cert.issuer} onChange={(v) => updateCertification(cert.id, "issuer", v)} />
-                        <InputField label="Date (optional)" value={cert.date ?? ""} onChange={(v) => updateCertification(cert.id, "date", v)} />
+                         <InputField label="Project Name" placeholder="e.g. E-Commerce Platform" value={proj.name} onChange={(v) => updateProject(proj.id, "name", v)} />
+                         <div className="space-y-1">
+                           <label className="block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Description</label>
+                           <textarea
+                             className="min-h-[80px] w-full rounded-lg border border-input bg-background p-2.5 text-xs text-foreground placeholder-muted-foreground shadow-sm transition-all focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                             placeholder="Describe the key features, achievements, and your role..."
+                             value={proj.description}
+                             onChange={(e) => updateProject(proj.id, "description", e.target.value)}
+                           />
+                         </div>
+                         <InputField label="Technologies (comma-separated)" placeholder="e.g. React, Node.js, MongoDB" value={proj.technologies.join(", ")} onChange={(v) => updateProject(proj.id, "technologies", v.split(",").map((s) => s.trim()))} />
+                         <InputField label="URL (optional)" placeholder="e.g. https://github.com/username/project" value={proj.url ?? ""} onChange={(v) => updateProject(proj.id, "url", v)} />
+                       </div>
+                     </Card>
+                   ))}
+                   <Button variant="outline" className="w-full" onClick={addProject}>
+                     <Plus className="size-4" /> Add Project
+                   </Button>
+                 </TabsContent>
+ 
+                 <TabsContent value="certifications" className="space-y-4 pt-4">
+                   {resume.certifications.map((cert) => (
+                     <Card key={cert.id} className="p-5 bg-card border border-border hover:border-primary/20 transition-all shadow-md">
+                       <div className="mb-3 flex items-center justify-between">
+                         <span className="text-sm font-medium">{cert.name || "New Certification"}</span>
+                         <Button variant="ghost" size="sm" onClick={() => removeCertification(cert.id)}>
+                           <Trash2 className="size-4 text-destructive" />
+                         </Button>
+                       </div>
+                       <div className="space-y-3">
+                         <InputField label="Name" placeholder="e.g. AWS Certified Developer" value={cert.name} onChange={(v) => updateCertification(cert.id, "name", v)} />
+                         <InputField label="Issuer" placeholder="e.g. Amazon Web Services" value={cert.issuer} onChange={(v) => updateCertification(cert.id, "issuer", v)} />
+                         <InputField label="Date (optional)" placeholder="e.g. 2025" value={cert.date ?? ""} onChange={(v) => updateCertification(cert.id, "date", v)} />
                       </div>
                     </Card>
                   ))}
@@ -827,17 +853,17 @@ export default function BuilderPage() {
                 <div className="flex justify-between items-center pt-4 border-t border-border mt-4 no-print">
                   <Button
                     variant="outline"
-                    size="sm"
                     onClick={handlePrevTab}
                     disabled={activeTab === "contact"}
+                    className="px-6 py-2.5 text-sm"
                   >
                     ← Back
                   </Button>
                   {activeTab !== "optimize" ? (
                     <Button
                       variant="gradient"
-                      size="sm"
                       onClick={handleNextTab}
+                      className="px-6 py-2.5 text-sm"
                     >
                       Next Step →
                     </Button>
@@ -848,8 +874,7 @@ export default function BuilderPage() {
               </Tabs>
             </div>
 
-            {/* Preview */}
-            <div className="hidden lg:block print:block print:w-full">
+            <div className={`print:block print:w-full ${viewMode === "preview" ? "block" : "hidden lg:block"}`}>
               <div className="sticky top-24 print:static print:top-0">
                 <div className="mb-3 flex items-center gap-2 no-print">
                   <Eye className="size-4 text-muted-foreground" />
@@ -915,9 +940,7 @@ export default function BuilderPage() {
                   value={otpCode}
                   onChange={(e) => setOtpCode(e.target.value)}
                 />
-                <p className="text-[10px] text-muted-foreground text-center mt-1">
-                  For testing, use code <span className="text-primary font-semibold">997343</span> if the email doesn&apos;t arrive.
-                </p>
+
                 <Button variant="gradient" className="w-full" onClick={handleVerifyOtp} disabled={verifyingOtp}>
                   {verifyingOtp ? "Verify & Export" : "Verify & Export"}
                 </Button>
@@ -946,10 +969,11 @@ export default function BuilderPage() {
 
 // ---- Helper Components ----
 
-function InputField({ label, value, onChange, type = "text" }: {
+function InputField({ label, value, onChange, placeholder, type = "text" }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
+  placeholder?: string;
   type?: string;
 }) {
   return (
@@ -960,6 +984,7 @@ function InputField({ label, value, onChange, type = "text" }: {
         className="w-full rounded-lg border border-input bg-background px-3 py-2 text-xs text-foreground placeholder-muted-foreground shadow-sm transition-all focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
       />
     </div>
   );

@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            from: "ResumeIQ <onboarding@resend.dev>",
+            from: `ResumeIQ <${process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev"}>`,
             to: cleanEmail,
             subject: "Your ResumeIQ Verification Code",
             html: `
