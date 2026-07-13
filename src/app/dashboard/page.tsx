@@ -172,16 +172,16 @@ export default function DashboardPage() {
   if (status === "unauthenticated") return null;
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#070a13] text-slate-100">
+    <div className="flex min-h-screen flex-col bg-background text-foreground">
       <Navbar />
       <main className="flex-1 px-4 py-10 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-5xl space-y-10">
           
           {/* Header */}
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-800/60 pb-6">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border pb-6">
             <div>
-              <h1 className="text-3xl font-extrabold tracking-tight text-white">Career Dashboard</h1>
-              <p className="mt-1 text-sm text-slate-400">
+              <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Career Dashboard</h1>
+              <p className="mt-1 text-sm text-muted-foreground">
                 Welcome back{session?.user?.name ? `, ${session.user.name}` : ""} · Manage your career progression.
               </p>
             </div>
@@ -189,7 +189,7 @@ export default function DashboardPage() {
               <Button asChild variant="gradient" size="sm">
                 <Link href="/analyze"><BarChart3 className="size-4 mr-2" /> New analysis</Link>
               </Button>
-              <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white" onClick={() => signOut({ callbackUrl: "/" })}>
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground" onClick={() => signOut({ callbackUrl: "/" })}>
                 <LogOut className="size-4 mr-2" /> Sign out
               </Button>
             </div>
@@ -197,56 +197,56 @@ export default function DashboardPage() {
 
           {/* Stats Grid */}
           <div className="grid gap-4 sm:grid-cols-4">
-            <Card className="p-5 bg-[#0e1322]/80 border-slate-800/80 hover:border-primary/30 transition-all">
+            <Card className="p-5 bg-card border border-border hover:border-primary/20 transition-all shadow-sm">
               <div className="flex items-center gap-3">
                 <div className="grid size-10 place-items-center rounded-lg bg-primary/10 text-primary">
                   <FileText className="size-5" />
                 </div>
                 <div>
-                  <div className="text-2xl font-extrabold text-white">{resumes.length}</div>
-                  <div className="text-xs text-slate-400 font-medium">Saved analyses</div>
+                  <div className="text-2xl font-extrabold text-foreground">{resumes.length}</div>
+                  <div className="text-xs text-muted-foreground font-medium">Saved analyses</div>
                 </div>
               </div>
             </Card>
             
-            <Card className="p-5 bg-[#0e1322]/80 border-slate-800/80 hover:border-emerald-500/30 transition-all">
+            <Card className="p-5 bg-card border border-border hover:border-emerald-500/20 transition-all shadow-sm">
               <div className="flex items-center gap-3">
-                <div className="grid size-10 place-items-center rounded-lg bg-emerald-500/10 text-emerald-400">
+                <div className="grid size-10 place-items-center rounded-lg bg-emerald-500/10 text-emerald-500">
                   <BarChart3 className="size-5" />
                 </div>
                 <div>
-                  <div className="text-2xl font-extrabold text-white">
+                  <div className="text-2xl font-extrabold text-foreground">
                     {resumes.length > 0
                       ? Math.round(resumes.reduce((a, r) => a + r.overallScore, 0) / resumes.length)
                       : "—"}
                   </div>
-                  <div className="text-xs text-slate-400 font-medium">Avg score</div>
+                  <div className="text-xs text-muted-foreground font-medium">Avg score</div>
                 </div>
               </div>
             </Card>
 
-            <Card className="p-5 bg-[#0e1322]/80 border-slate-800/80 hover:border-indigo-500/30 transition-all">
+            <Card className="p-5 bg-card border border-border hover:border-indigo-500/20 transition-all shadow-sm">
               <div className="flex items-center gap-3">
-                <div className="grid size-10 place-items-center rounded-lg bg-indigo-500/10 text-indigo-400">
+                <div className="grid size-10 place-items-center rounded-lg bg-indigo-500/10 text-indigo-500">
                   <Briefcase className="size-5" />
                 </div>
                 <div>
-                  <div className="text-2xl font-extrabold text-white">{applications.length}</div>
-                  <div className="text-xs text-slate-400 font-medium">Applications</div>
+                  <div className="text-2xl font-extrabold text-foreground">{applications.length}</div>
+                  <div className="text-xs text-muted-foreground font-medium">Applications</div>
                 </div>
               </div>
             </Card>
 
-            <Card className="p-5 bg-[#0e1322]/80 border-slate-800/80 hover:border-violet-500/30 transition-all">
+            <Card className="p-5 bg-card border border-border hover:border-violet-500/20 transition-all shadow-sm">
               <div className="flex items-center gap-3">
-                <div className="grid size-10 place-items-center rounded-lg bg-violet-500/10 text-violet-400">
+                <div className="grid size-10 place-items-center rounded-lg bg-violet-500/10 text-violet-500">
                   <User className="size-5" />
                 </div>
                 <div>
-                  <div className="text-2xl font-extrabold text-white truncate max-w-[120px]">
+                  <div className="text-2xl font-extrabold text-foreground truncate max-w-[120px]">
                     {session?.user?.name || session?.user?.email?.split("@")[0] || "User"}
                   </div>
-                  <div className="text-xs text-slate-400 font-medium">Account profile</div>
+                  <div className="text-xs text-muted-foreground font-medium">Account profile</div>
                 </div>
               </div>
             </Card>
@@ -254,7 +254,7 @@ export default function DashboardPage() {
 
           {/* Saved analyses */}
           <div className="space-y-4">
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+            <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
               <FileText className="size-5 text-indigo-500" />
               Saved Resume Reports
             </h2>
@@ -264,10 +264,10 @@ export default function DashboardPage() {
                 <Loader2 className="size-6 animate-spin text-indigo-500" />
               </div>
             ) : resumes.length === 0 ? (
-              <Card className="p-12 text-center bg-[#0e1322]/40 border-slate-800 border-dashed">
-                <FileText className="mx-auto size-12 text-slate-600" />
-                <h3 className="mt-4 font-bold text-white">No saved analyses yet</h3>
-                <p className="mt-1 text-xs text-slate-400">
+              <Card className="p-12 text-center bg-card border border-border border-dashed">
+                <FileText className="mx-auto size-12 text-muted-foreground" />
+                <h3 className="mt-4 font-bold text-foreground">No saved analyses yet</h3>
+                <p className="mt-1 text-xs text-muted-foreground">
                   Analyze your resume and sign in to save your results here.
                 </p>
                 <Button asChild variant="gradient" className="mt-6">
@@ -277,21 +277,21 @@ export default function DashboardPage() {
             ) : (
               <div className="space-y-3">
                 {resumes.map((resume) => (
-                  <Card key={resume.id} className="flex items-center gap-4 p-4 bg-[#0e1322]/50 border-slate-800 hover:border-primary/40 transition-all">
+                  <Card key={resume.id} className="flex items-center gap-4 p-4 bg-card border border-border hover:border-primary/20 transition-all shadow-sm">
                     <div className="flex min-w-0 flex-1 items-center gap-4">
-                      <div className="grid size-12 shrink-0 place-items-center rounded-lg bg-[#141b2f] text-primary">
+                      <div className="grid size-12 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
                         <FileText className="size-5" />
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="truncate font-semibold text-sm text-slate-200">
+                          <span className="truncate font-semibold text-sm text-foreground">
                             {resume.candidateName || resume.fileName || "Untitled"}
                           </span>
                           <Badge variant={resume.overallScore >= 70 ? "success" : resume.overallScore >= 50 ? "warning" : "destructive"} className="text-[10px] px-1.5 py-0.5">
                             {resume.grade}
                           </Badge>
                         </div>
-                        <div className="mt-1 flex items-center gap-3 text-xs text-slate-400">
+                        <div className="mt-1 flex items-center gap-3 text-xs text-muted-foreground">
                           <span>Score: {resume.overallScore}/100</span>
                           {resume.bestFitRole && <span>· {resume.bestFitRole}</span>}
                           <span>· {new Date(resume.createdAt).toLocaleDateString()}</span>
@@ -299,7 +299,7 @@ export default function DashboardPage() {
                       </div>
                     </div>
                     <div className="flex shrink-0 items-center gap-2">
-                      <Button asChild variant="ghost" size="sm" className="hover:bg-slate-800">
+                      <Button asChild variant="ghost" size="sm" className="hover:bg-accent hover:text-accent-foreground">
                         <Link href={`/dashboard/${resume.id}`}>
                           <ExternalLink className="size-4" />
                         </Link>
@@ -325,47 +325,47 @@ export default function DashboardPage() {
           </div>
 
           {/* Job Application Tracker */}
-          <div className="border-t border-slate-800/80 pt-10 space-y-6">
+          <div className="border-t border-border pt-10 space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
                   <Briefcase className="size-5 text-indigo-500" />
                   One-click Apply Tracker
                 </h2>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   Track your job applications, interview timelines, and hiring statuses in one central portal.
                 </p>
               </div>
-              <Button onClick={() => setShowAddApp(!showAddApp)} variant="outline" size="sm" className="border-slate-800 text-slate-300 hover:bg-slate-900">
+              <Button onClick={() => setShowAddApp(!showAddApp)} variant="outline" size="sm" className="border-input hover:bg-accent hover:text-accent-foreground">
                 <Plus className="size-4 mr-1.5" /> {showAddApp ? "Close form" : "Add Application"}
               </Button>
             </div>
 
             {showAddApp && (
-              <Card className="p-5 border border-indigo-500/20 bg-[#0e1322]/80 space-y-4 animate-in slide-in-from-top-4 duration-200">
+              <Card className="p-5 border border-border bg-card space-y-4 animate-in slide-in-from-top-4 duration-200 shadow-lg">
                 <div className="grid gap-4 sm:grid-cols-3">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Company Name</label>
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Company Name</label>
                     <input
-                      className="w-full rounded-lg border border-slate-800 bg-[#0c101d] px-3 py-2 text-xs text-slate-100 placeholder-slate-500 shadow-inner transition-all focus:border-indigo-500 focus:bg-[#0f1526] focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                      className="w-full rounded-lg border border-input bg-background px-3 py-2 text-xs text-foreground placeholder-muted-foreground shadow-sm transition-all focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                       placeholder="e.g. Google"
                       value={company}
                       onChange={(e) => setCompany(e.target.value)}
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Target Role</label>
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Target Role</label>
                     <input
-                      className="w-full rounded-lg border border-slate-800 bg-[#0c101d] px-3 py-2 text-xs text-slate-100 placeholder-slate-500 shadow-inner transition-all focus:border-indigo-500 focus:bg-[#0f1526] focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                      className="w-full rounded-lg border border-input bg-background px-3 py-2 text-xs text-foreground placeholder-muted-foreground shadow-sm transition-all focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                       placeholder="e.g. Backend Engineer"
                       value={role}
                       onChange={(e) => setRole(e.target.value)}
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Current Status</label>
+                    <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Current Status</label>
                     <select
-                      className="w-full rounded-lg border border-slate-800 bg-[#0c101d] px-3 py-2 text-xs text-slate-100 shadow-inner transition-all focus:border-indigo-500 focus:bg-[#0f1526] focus:outline-none"
+                      className="w-full rounded-lg border border-input bg-background px-3 py-2 text-xs text-foreground shadow-sm transition-all focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                       value={appStatus}
                       onChange={(e) => setAppStatus(e.target.value)}
                     >
@@ -377,16 +377,16 @@ export default function DashboardPage() {
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Notes / Details (Optional)</label>
+                  <label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Notes / Details (Optional)</label>
                   <textarea
-                    className="w-full min-h-[60px] rounded-lg border border-slate-800 bg-[#0c101d] p-3 text-xs text-slate-100 placeholder-slate-500 shadow-inner transition-all focus:border-indigo-500 focus:bg-[#0f1526] focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    className="w-full min-h-[60px] rounded-lg border border-input bg-background p-3 text-xs text-foreground placeholder-muted-foreground shadow-sm transition-all focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                     placeholder="e.g. Recruiter contacted via LinkedIn, Round 1 scheduled on Friday..."
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
                   />
                 </div>
                 <div className="flex justify-end gap-2">
-                  <Button variant="ghost" size="sm" className="hover:bg-slate-800 text-slate-300" onClick={() => setShowAddApp(false)}>
+                  <Button variant="ghost" size="sm" className="hover:bg-accent hover:text-accent-foreground text-muted-foreground" onClick={() => setShowAddApp(false)}>
                     Cancel
                   </Button>
                   <Button variant="gradient" size="sm" onClick={handleCreateApplication} disabled={savingApp}>
@@ -401,8 +401,8 @@ export default function DashboardPage() {
                 <Loader2 className="size-6 animate-spin text-indigo-500" />
               </div>
             ) : applications.length === 0 ? (
-              <Card className="p-8 text-center text-slate-500 border border-dashed border-slate-800 bg-[#0e1322]/20">
-                <ClipboardList className="mx-auto size-10 text-slate-700" />
+              <Card className="p-8 text-center text-muted-foreground border border-dashed border-border bg-card/50">
+                <ClipboardList className="mx-auto size-10 text-muted-foreground" />
                 <p className="text-sm mt-3">No jobs tracked yet. Start organizing your applications!</p>
               </Card>
             ) : (
@@ -411,17 +411,17 @@ export default function DashboardPage() {
                   const companyInitial = app.company ? app.company.charAt(0).toUpperCase() : "?";
                   
                   return (
-                    <Card key={app.id} className="p-4 flex items-center justify-between gap-4 bg-[#0e1322]/50 border-slate-800 hover:border-indigo-500/20 transition-all">
+                    <Card key={app.id} className="p-4 flex items-center justify-between gap-4 bg-card border border-border hover:border-primary/10 transition-all shadow-sm">
                       <div className="flex items-center gap-3">
-                        <div className="grid size-10 place-items-center rounded-lg bg-indigo-500/10 text-indigo-400 font-extrabold text-sm shrink-0 border border-indigo-500/10">
+                        <div className="grid size-10 place-items-center rounded-lg bg-indigo-500/10 text-indigo-500 font-extrabold text-sm shrink-0 border border-indigo-500/10">
                           {companyInitial}
                         </div>
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="font-semibold text-sm text-slate-200">{app.company}</span>
-                            <span className="text-xs text-slate-400 font-medium">— {app.role}</span>
+                            <span className="font-semibold text-sm text-foreground">{app.company}</span>
+                            <span className="text-xs text-muted-foreground font-medium">— {app.role}</span>
                           </div>
-                          <div className="flex items-center gap-3 mt-1 text-[11px] text-slate-500">
+                          <div className="flex items-center gap-3 mt-1 text-[11px] text-muted-foreground">
                             <span className="flex items-center gap-1"><Calendar className="size-3" /> {new Date(app.date).toLocaleDateString()}</span>
                             {app.notes && <span className="truncate max-w-[200px] sm:max-w-[400px]">· {app.notes}</span>}
                           </div>
@@ -429,7 +429,7 @@ export default function DashboardPage() {
                       </div>
                       <div className="flex items-center gap-3">
                         <select
-                          className="rounded-lg border border-slate-800 bg-[#0c101d] px-2.5 py-1 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
+                          className="rounded-lg border border-input bg-background px-2.5 py-1 text-xs text-foreground focus:outline-none focus:border-primary"
                           value={app.status}
                           onChange={(e) => handleUpdateStatus(app.id, e.target.value)}
                         >

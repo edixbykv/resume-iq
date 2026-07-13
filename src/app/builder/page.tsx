@@ -824,13 +824,12 @@ export default function BuilderPage() {
                   </Card>
                 </TabsContent>
 
-                <div className="flex justify-between items-center pt-4 border-t border-slate-800/60 mt-4 no-print">
+                <div className="flex justify-between items-center pt-4 border-t border-border mt-4 no-print">
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={handlePrevTab}
                     disabled={activeTab === "contact"}
-                    className="border-slate-800 text-slate-300 hover:bg-slate-900/60"
                   >
                     ← Back
                   </Button>
