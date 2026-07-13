@@ -14,6 +14,8 @@ ResumeIQ is a premium, high-performance career intelligence platform built for W
 - **ATS-Safe Templates**: Clean, grid-based layouts designed according to executive recruitment practices.
 - **Print Optimization**: Automatic print styling hides menus, layout controls, and navbars. Removes scrolling restrictions to produce clean, page-truncated PDFs.
 - **Inline Flow Navigation**: Integrated step-by-step Back and Next buttons at the bottom of the editor to guide users seamlessly.
+- **Mobile Responsive Switcher**: A segmented view controller allows mobile/tablet users to switch between the **Editor Form** and the **Resume Preview** easily. Button sizes and tap targets are optimized to be thumb-friendly.
+- **Custom Placeholders**: All inputs render clear example placeholder text (e.g. `e.g. John Doe` or `e.g. Software Engineer`) to guide inputs.
 
 ### 2. Job-Specific AI Optimizer
 - **Job Description Alignment**: Paste any job description to trigger the AI optimizer.
@@ -34,15 +36,15 @@ ResumeIQ is a premium, high-performance career intelligence platform built for W
 - **Upskilling Path**: Automatic 90-day plan indicating certification targets and required projects.
 
 ### 5. Passwordless Email OTP Login
+- **Only Email OTP Authentication**: Simplified and secure authentication. Google and GitHub sign-in buttons have been completely removed.
 - **Seamless Auth**: Generates a 6-digit OTP code log stored in the database.
-- **Unified Portal Access**: OTP verification is integrated into both the checkout flow and the main `/signin` portal page.
-- **Resend Integration**: Sends dynamic, styled account verification emails directly to the user's inbox via Resend.
-- **Universal Testing Bypass Code**: Entering **`997343`** immediately bypasses database checks and logs the user in, guaranteeing seamless testing when email delivery is limited by sandbox/domain limits.
+- **Unified Portal Access**: OTP verification is integrated into both the builder checkout flow and the main `/signin` portal page.
+- **Resend Integration**: Sends dynamic, styled account verification emails directly to the user's inbox via Resend. Support custom sender domains via `RESEND_FROM_EMAIL` environment variable.
 - **Auto-Account Creation**: Automatically provisions User accounts on the fly when verification succeeds.
 
-### 6. Razorpay Live Billings
-- **Premium Upgrades**: Implements Razorpay checkout for a flat-rate ₹9 resume unlock fee.
-- **Transaction Logs**: Verifies order callbacks and records transactions securely inside the database.
+### 6. Free Resume Exports (Bypassed Billing)
+- **Free PDF Downloads**: The Razorpay billing check is bypassed for now, allowing users to export PDF resumes completely for free.
+- **Preserved Code Blocks**: Razorpay order verification code is kept intact but commented out inside the codebase for future billing launches.
 
 ### 7. Interactive Admin Panel (`/admin`)
 - **System Monitoring**: Live counters for total accounts, paid transactions, revenue generated, and OTPs issued.
@@ -62,7 +64,7 @@ ResumeIQ is a premium, high-performance career intelligence platform built for W
 - **`/builder`**: Interactive builder workspace, styling customizer, and job optimization tab.
 - **`/dashboard`**: Workspace showing saved analysis scorecards and the One-click Apply Tracker.
 - **`/admin`**: Dark-themed monitoring terminal.
-- **`/signin`**: Unified gateway supporting GitHub, Google, and Secure Email OTP verification.
+- **`/signin`**: Unified gateway supporting secure passwordless Email OTP verification.
 - **`/privacy` & `/terms`**: Legal compliance and policy documents.
 
 ### API Routes (Backend Endpoints)

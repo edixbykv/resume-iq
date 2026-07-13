@@ -64,13 +64,15 @@ function SignInContent() {
     setVerifyingOtp(true);
     setOtpError("");
     try {
-      const result = (await signIn("credentials", {
+      const result = await signIn("credentials", {
         email: emailInput,
         code: otpCode,
-        callbackUrl,
-      })) as unknown as { error?: string };
+        redirect: false,
+      });
       if (result?.error) {
         setOtpError("Invalid or expired verification code.");
+      } else {
+        window.location.href = callbackUrl;
       }
     } catch {
       setOtpError("An error occurred during verification.");

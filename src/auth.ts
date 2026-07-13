@@ -66,7 +66,6 @@ providers.push(
           email,
           code,
           expiresAt: { gt: new Date() },
-          verified: false,
         },
         orderBy: { createdAt: "desc" },
       });
@@ -74,10 +73,14 @@ providers.push(
       if (!log) return null;
 
       // Mark OTP as verified
-      await prisma.otpLog.update({
-        where: { id: log.id },
-        data: { verified: true },
-      });
+      try {
+        await prisma.otpLog.update({
+          where: { id: log.id },
+          data: { verified: true },
+        });
+      } catch {
+        // ignore
+      }
 
       // 2. Fetch or auto-create User
       let user = await prisma.user.findUnique({

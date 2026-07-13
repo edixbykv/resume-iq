@@ -244,6 +244,10 @@ export default function BuilderPage() {
       return;
     }
 
+    // Payment step is bypassed for now (platform is free). Directly export.
+    window.print();
+
+    /*
     const options = {
       key: "rzp_live_T1MMMfUMUEWNru",
       amount: 900, // ₹9.00 in paise
@@ -279,7 +283,8 @@ export default function BuilderPage() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const rzp = new (window as any).Razorpay(options);
     rzp.open();
-  }, [status, resume.contact]);
+    */
+  }, [status]);
 
   // Trigger payment automatically if ?pay=true query parameter is present on page load
   useEffect(() => {
