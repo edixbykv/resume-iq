@@ -26,6 +26,23 @@ export default function BuilderPage() {
   const { status } = useSession();
   const [resume, setResume] = useState<BuilderResume>(createEmptyResume);
   const [activeTab, setActiveTab] = useState("contact");
+
+  const TABS_ORDER = ["contact", "summary", "experience", "education", "skills", "projects", "certifications", "template", "optimize"];
+
+  const handleNextTab = () => {
+    const currentIndex = TABS_ORDER.indexOf(activeTab);
+    if (currentIndex < TABS_ORDER.length - 1) {
+      setActiveTab(TABS_ORDER[currentIndex + 1]);
+    }
+  };
+
+  const handlePrevTab = () => {
+    const currentIndex = TABS_ORDER.indexOf(activeTab);
+    if (currentIndex > 0) {
+      setActiveTab(TABS_ORDER[currentIndex - 1]);
+    }
+  };
+
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -798,6 +815,29 @@ export default function BuilderPage() {
                     </Button>
                   </Card>
                 </TabsContent>
+
+                <div className="flex justify-between items-center pt-4 border-t border-slate-800/60 mt-4 no-print">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handlePrevTab}
+                    disabled={activeTab === "contact"}
+                    className="border-slate-800 text-slate-300 hover:bg-slate-900/60"
+                  >
+                    ← Back
+                  </Button>
+                  {activeTab !== "optimize" ? (
+                    <Button
+                      variant="gradient"
+                      size="sm"
+                      onClick={handleNextTab}
+                    >
+                      Next Step →
+                    </Button>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">Final optimization step!</span>
+                  )}
+                </div>
               </Tabs>
             </div>
 

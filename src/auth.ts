@@ -2,7 +2,6 @@ import NextAuth, { type NextAuthConfig } from "next-auth";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma, dbEnabled } from "@/lib/prisma";
 
 const providers: NextAuthConfig["providers"] = [];
@@ -84,5 +83,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
   pages: { signIn: "/analyze" },
   session: { strategy: "jwt" as const },
-  ...(dbEnabled ? { adapter: PrismaAdapter(prisma) } : {}),
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user && token.id) {
+        session.user.id = token.id as string;
+      }
+      return session;
+    },
+  },
 });
