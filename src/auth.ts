@@ -83,6 +83,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
   pages: { signIn: "/analyze" },
   session: { strategy: "jwt" as const },
+  secret: process.env.AUTH_SECRET || "83fb79c4a7c1b747372d8299a9a3b984",
   callbacks: {
     async jwt({ token, user }) {
       if (user) {

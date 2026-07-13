@@ -87,7 +87,7 @@ export default function BuilderPage() {
   const [sendingOtp, setSendingOtp] = useState(false);
   const [verifyingOtp, setVerifyingOtp] = useState(false);
   const [otpError, setOtpError] = useState("");
-  const [debugOtp, setDebugOtp] = useState("");
+
 
   const handleSendOtp = async () => {
     if (!emailInput || !emailInput.includes("@")) {
@@ -96,7 +96,6 @@ export default function BuilderPage() {
     }
     setSendingOtp(true);
     setOtpError("");
-    setDebugOtp("");
     try {
       const res = await fetch("/api/auth/otp/send", {
         method: "POST",
@@ -106,9 +105,6 @@ export default function BuilderPage() {
       const data = await res.json();
       if (res.ok) {
         setOtpSent(true);
-        if (data.code) {
-          setDebugOtp(data.code);
-        }
       } else {
         setOtpError(data.error || "Failed to send verification code.");
       }
@@ -921,7 +917,6 @@ export default function BuilderPage() {
               setShowLoginModal(false);
               setOtpSent(false);
               setOtpError("");
-              setDebugOtp("");
             }}>
               Cancel
             </Button>
