@@ -18,10 +18,10 @@ const fadeUp = {
 };
 
 const features = [
-  { icon: BrainCircuit, title: "AI Resume Analyzer", desc: "Get an instant recruiter-grade analysis with 10 detailed sub-scores.", tag: "Core" },
-  { icon: Target, title: "Job Description Match", desc: "Paste any job description to get your match percentage and fix gaps.", tag: "Core" },
-  { icon: FileText, title: "Resume Builder", desc: "Create high-converting resumes with beautiful, print-ready templates.", tag: "New" },
-  { icon: UserCheck, title: "Recruiter Simulator", desc: "Find out if a recruiter would shortlist you and check your hiring probability.", tag: "Core" },
+  { icon: FileText, title: "AI Resume Builder", desc: "Create high-converting resumes with premium style customization templates.", tag: "Builder" },
+  { icon: BrainCircuit, title: "ATS & Recruiter Simulator", desc: "Get deep, recruiter-grade analysis scorecards, red-flags checks, and bullet rewrites.", tag: "Analyzer" },
+  { icon: Target, title: "AI JD Match & Skill Gap", desc: "Align your profile to target job descriptions, uncover skill gaps, and follow a 90-day plan.", tag: "Upskill" },
+  { icon: UserCheck, title: "One-Click Apply Tracker", desc: "Log applications, record timeline notes, and track hiring stages in a central dashboard.", tag: "Tracker" },
 ];
 
 const steps = [
@@ -44,18 +44,17 @@ export default function Home() {
           <motion.div initial="hidden" animate="show" className="mx-auto max-w-3xl text-center">
             <motion.div variants={fadeUp}>
               <Badge variant="outline" className="mb-5 gap-1.5 px-3 py-1 text-xs">
-                <Sparkles className="size-3.5 text-primary" /> AI Resume Intelligence · by KVAI Solutions
+                <Sparkles className="size-3.5 text-primary" /> {"India's Premium AI Career Platform · by KVAI Solutions"}
               </Badge>
             </motion.div>
             <motion.h1 variants={fadeUp} custom={1} className="text-balance text-4xl font-bold tracking-tight sm:text-6xl">
-              Your resume, reviewed like a{" "}
+              From Resume Creation to{" "}
               <span className="bg-gradient-to-r from-violet-500 via-primary to-indigo-500 bg-clip-text text-transparent">
-                real recruiter would
+                Landing Your Dream Job
               </span>
             </motion.h1>
             <motion.p variants={fadeUp} custom={2} className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-muted-foreground">
-              Not just another ATS checker. ResumeIQ is a complete career intelligence system —
-              deep scoring, recruiter simulation, job matching, salary insights and a 90-day plan to get hired.
+              The only unified career workspace. Create your resume, optimize it dynamically for target job descriptions, track your applications, simulate recruiter screening, and follow a custom upskilling plan.
             </motion.p>
             <motion.div variants={fadeUp} custom={3} className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Button asChild variant="gradient" size="lg" className="w-full sm:w-auto">
