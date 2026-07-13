@@ -64,11 +64,11 @@ function SignInContent() {
     setVerifyingOtp(true);
     setOtpError("");
     try {
-      const result: any = await signIn("credentials", {
+      const result = (await signIn("credentials", {
         email: emailInput,
         code: otpCode,
         callbackUrl,
-      });
+      })) as unknown as { error?: string };
       if (result?.error) {
         setOtpError("Invalid or expired verification code.");
       }
@@ -80,24 +80,24 @@ function SignInContent() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#070a13] text-slate-100">
+    <div className="flex min-h-screen flex-col bg-background text-foreground">
       <Navbar />
       <main className="flex-1 px-4 py-16 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-md">
-          <Button asChild variant="ghost" size="sm" className="mb-6 text-slate-400 hover:text-white">
+          <Button asChild variant="ghost" size="sm" className="mb-6 text-muted-foreground hover:text-foreground">
             <Link href="/analyze"><ArrowLeft className="size-4 mr-1.5" /> Back to analyzer</Link>
           </Button>
 
-          <Card className="p-8 bg-[#0e1322]/80 border-slate-800/80 shadow-2xl space-y-6">
+          <Card className="p-8 bg-card border border-border shadow-xl space-y-6 text-card-foreground">
             <div className="text-center">
-              <h1 className="text-2xl font-extrabold tracking-tight text-white">Sign in to ResumeIQ</h1>
-              <p className="mt-2 text-xs text-slate-400">
+              <h1 className="text-2xl font-extrabold tracking-tight text-foreground">Sign in to ResumeIQ</h1>
+              <p className="mt-2 text-xs text-muted-foreground">
                 Save your analyses, track history, and unlock premium features.
               </p>
             </div>
 
             {error === "OAuthAccountNotLinked" && (
-              <div className="rounded-lg bg-amber-950/40 border border-amber-900/40 p-3 text-xs text-amber-300 text-center font-medium">
+              <div className="rounded-lg bg-amber-950/20 border border-amber-900/30 p-3 text-xs text-amber-600 dark:text-amber-300 text-center font-medium">
                 An account with this email already exists using a different sign-in method.
               </div>
             )}
@@ -105,7 +105,7 @@ function SignInContent() {
             <div className="space-y-3">
               <Button
                 variant="outline"
-                className="w-full justify-center gap-2 border-slate-800 bg-[#0c101d] text-slate-300 hover:bg-[#141b2f] hover:text-white"
+                className="w-full justify-center gap-2 border border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
                 onClick={() => handleSignIn("github")}
                 disabled={loading !== null || sendingOtp || verifyingOtp}
               >
@@ -119,7 +119,7 @@ function SignInContent() {
 
               <Button
                 variant="outline"
-                className="w-full justify-center gap-2 border-slate-800 bg-[#0c101d] text-slate-300 hover:bg-[#141b2f] hover:text-white"
+                className="w-full justify-center gap-2 border border-input bg-background text-foreground hover:bg-accent hover:text-accent-foreground"
                 onClick={() => handleSignIn("google")}
                 disabled={loading !== null || sendingOtp || verifyingOtp}
               >
@@ -138,8 +138,8 @@ function SignInContent() {
             </div>
 
             {/* Email OTP Section */}
-            <div className="space-y-4 border-t border-slate-800/80 pt-6">
-              <div className="text-center text-[10px] font-bold uppercase tracking-widest text-slate-500">
+            <div className="space-y-4 border-t border-border pt-6">
+              <div className="text-center text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                 Or Continue With Secure OTP
               </div>
 
@@ -152,10 +152,10 @@ function SignInContent() {
               {!otpSent ? (
                 <div className="space-y-3">
                   <div className="space-y-1 text-left">
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Email Address</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Email Address</label>
                     <input
                       type="email"
-                      className="w-full rounded-lg border border-slate-800 bg-[#0c101d] px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500 shadow-inner transition-all focus:border-indigo-500 focus:bg-[#0f1526] focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                      className="w-full rounded-lg border border-input bg-background px-3.5 py-2.5 text-xs text-foreground placeholder-muted-foreground shadow-sm transition-all focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                       placeholder="name@company.com"
                       value={emailInput}
                       onChange={(e) => setEmailInput(e.target.value)}
@@ -177,15 +177,15 @@ function SignInContent() {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  <div className="text-xs text-slate-400 text-center mb-1">
-                    We sent a verification code to <span className="text-slate-200 font-semibold">{emailInput}</span>. Enter it below to sign in.
+                  <div className="text-xs text-muted-foreground text-center mb-1">
+                    We sent a verification code to <span className="text-foreground font-semibold">{emailInput}</span>. Enter it below to sign in.
                   </div>
                   <div className="space-y-1 text-left">
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Verification Code</label>
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Verification Code</label>
                     <input
                       type="text"
                       maxLength={6}
-                      className="w-full rounded-lg border border-slate-800 bg-[#0c101d] px-3.5 py-2.5 text-sm text-center text-slate-100 placeholder-slate-500 shadow-inner transition-all focus:border-indigo-500 focus:bg-[#0f1526] focus:outline-none focus:ring-1 focus:ring-indigo-500 font-mono tracking-widest text-base"
+                      className="w-full rounded-lg border border-input bg-background px-3.5 py-2.5 text-sm text-center text-foreground placeholder-muted-foreground shadow-sm transition-all focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary font-mono tracking-widest text-base"
                       placeholder="123456"
                       value={otpCode}
                       onChange={(e) => setOtpCode(e.target.value)}
@@ -206,7 +206,7 @@ function SignInContent() {
                   </Button>
                   <Button
                     variant="ghost"
-                    className="w-full text-xs text-slate-400 hover:text-white"
+                    className="w-full text-xs text-muted-foreground hover:text-foreground"
                     onClick={() => {
                       setOtpSent(false);
                       setOtpError("");
@@ -218,13 +218,13 @@ function SignInContent() {
               )}
             </div>
 
-            <p className="mt-6 text-center text-[10px] text-slate-500 leading-normal">
+            <p className="mt-6 text-center text-[10px] text-muted-foreground leading-normal">
               By signing in, you agree to our{" "}
-              <Link href="/privacy" className="underline underline-offset-2 hover:text-slate-300">
+              <Link href="/privacy" className="underline underline-offset-2 hover:text-foreground">
                 Privacy Policy
               </Link>{" "}
               and{" "}
-              <Link href="/terms" className="underline underline-offset-2 hover:text-slate-300">
+              <Link href="/terms" className="underline underline-offset-2 hover:text-foreground">
                 Terms of Service
               </Link>
               .
