@@ -135,9 +135,7 @@ export default function BuilderPage() {
         setShowLoginModal(false);
         setOtpSent(false);
         setOtpCode("");
-        setTimeout(() => {
-          triggerPayment();
-        }, 500);
+        window.location.href = "/builder?pay=true";
       }
     } catch {
       setOtpError("An error occurred during verification.");
@@ -239,7 +237,7 @@ export default function BuilderPage() {
     return () => clearInterval(interval);
   }, [autoSave]);
 
-  const triggerPayment = () => {
+  const triggerPayment = useCallback(() => {
     if (status !== "authenticated") {
       setShowLoginModal(true);
       return;
@@ -280,7 +278,21 @@ export default function BuilderPage() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const rzp = new (window as any).Razorpay(options);
     rzp.open();
-  };
+  }, [status, resume.contact]);
+
+  // Trigger payment automatically if ?pay=true query parameter is present on page load
+  useEffect(() => {
+    if (typeof window !== "undefined" && status === "authenticated") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("pay") === "true") {
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+        setTimeout(() => {
+          triggerPayment();
+        }, 800);
+      }
+    }
+  }, [status, triggerPayment]);
 
   const updateContact = useCallback((field: string, value: string) => {
     setResume((r) => ({ ...r, contact: { ...r.contact, [field]: value } }));
@@ -863,10 +875,13 @@ export default function BuilderPage() {
               <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
                 <Sparkles className="size-6 animate-pulse" />
               </div>
-              <h3 className="text-xl font-bold tracking-tight text-foreground">Verify Your Account</h3>
-              <p className="text-sm text-muted-foreground text-center">
+              <h3 className="text-xl font-bold tracking-tight text-foreground flex items-center justify-center gap-1.5">
+                <Sparkles className="size-5 text-indigo-500" />
+                Unlock Premium Download (₹9)
+              </h3>
+              <p className="text-xs text-muted-foreground text-center">
                 {!otpSent 
-                  ? "Enter your email to receive an OTP and complete your resume export."
+                  ? "Enter your email to verify account. Get premium access and unlock print for a flat rate of ₹9 per resume."
                   : `We sent a 6-digit verification code to ${emailInput}.`
                 }
               </p>
@@ -936,11 +951,11 @@ function InputField({ label, value, onChange, type = "text" }: {
   type?: string;
 }) {
   return (
-    <div>
-      <label className="mb-1 block text-sm font-medium">{label}</label>
+    <div className="space-y-1 text-left">
+      <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">{label}</label>
       <input
         type={type}
-        className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+        className="w-full rounded-lg border border-slate-800 bg-[#0c101d] px-3 py-2 text-xs text-slate-100 placeholder-slate-500 shadow-inner transition-all focus:border-indigo-500 focus:bg-[#0f1526] focus:outline-none focus:ring-1 focus:ring-indigo-500"
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />
