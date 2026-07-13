@@ -906,11 +906,11 @@ export default function BuilderPage() {
               </div>
               <h3 className="text-xl font-bold tracking-tight text-foreground flex items-center justify-center gap-1.5">
                 <Sparkles className="size-5 text-indigo-500" />
-                Unlock Premium Download (₹9)
+                Verify Email to Export
               </h3>
               <p className="text-xs text-muted-foreground text-center">
                 {!otpSent 
-                  ? "Enter your email to verify account. Get premium access and unlock print for a flat rate of ₹9 per resume."
+                  ? "Enter your email to verify your account and export your resume for free."
                   : `We sent a 6-digit verification code to ${emailInput}.`
                 }
               </p>
