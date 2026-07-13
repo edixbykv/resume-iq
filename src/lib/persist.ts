@@ -10,6 +10,22 @@ export async function saveAnalysis(result: AnalysisResult, fileName?: string, us
   if (!process.env.DATABASE_URL) return null;
   try {
     const { prisma } = await import("@/lib/prisma");
+    // Prevent duplicate analyses for the same user within a 10-minute window
+    if (userId) {
+      const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
+      const existing = await prisma.resume.findFirst({
+        where: {
+          userId,
+          candidateName: result.fields.name ?? null,
+          overallScore: result.overallScore,
+          createdAt: { gte: tenMinutesAgo },
+        },
+      });
+      if (existing) {
+        return existing;
+      }
+    }
+
     return await prisma.resume.create({
       data: {
         userId: userId ?? null,

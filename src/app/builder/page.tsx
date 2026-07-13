@@ -15,14 +15,14 @@ import {
   TEMPLATE_LABELS,
 } from "@/lib/builder-types";
 import {
-  Plus, Trash2, Save, Download, Eye, ArrowLeft, Sparkles,
+  Plus, Trash2, Save, Download, Eye, ArrowLeft, Sparkles, FileText,
 } from "lucide-react";
 import Link from "next/link";
 
 let idCounter = 0;
 function uid() { return `e${++idCounter}`; }
 
-function convertBuilderResumeToText(r: any): string {
+function convertBuilderResumeToText(r: BuilderResume): string {
   const parts: string[] = [];
   if (r.contact?.fullName) parts.push(`Name: ${r.contact.fullName}`);
   if (r.contact?.email) parts.push(`Email: ${r.contact.email}`);
@@ -33,30 +33,35 @@ function convertBuilderResumeToText(r: any): string {
   
   if (r.experience && r.experience.length > 0) {
     parts.push("Work Experience:");
-    r.experience.forEach((exp: any) => {
-      parts.push(`- Role: ${exp.role}\n  Company: ${exp.company}\n  Duration: ${exp.duration}\n  Description: ${exp.description}`);
+    r.experience.forEach((exp) => {
+      const duration = `${exp.startDate} to ${exp.endDate || 'Present'}`;
+      const bulletsStr = exp.bullets && exp.bullets.length > 0
+        ? exp.bullets.map(b => `- ${b}`).join("\n")
+        : "";
+      parts.push(`- Title: ${exp.title}\n  Company: ${exp.company}\n  Duration: ${duration}\n  Location: ${exp.location || 'N/A'}\n${bulletsStr}`);
     });
   }
   if (r.education && r.education.length > 0) {
     parts.push("Education:");
-    r.education.forEach((edu: any) => {
-      parts.push(`- Degree: ${edu.degree}\n  School: ${edu.school}\n  Duration: ${edu.duration}`);
+    r.education.forEach((edu) => {
+      const duration = `${edu.startDate} to ${edu.endDate}`;
+      parts.push(`- Degree: ${edu.degree}${edu.field ? ` in ${edu.field}` : ''}\n  Institution: ${edu.institution}\n  Duration: ${duration}`);
     });
   }
   if (r.skills && r.skills.length > 0) {
-    parts.push(`Skills: ${r.skills.join(", ")}`);
+    parts.push(`Skills: ${r.skills.map(s => s.name).join(", ")}`);
   }
   if (r.projects && r.projects.length > 0) {
     parts.push("Projects:");
-    r.projects.forEach((proj: any) => {
-      parts.push(`- Project: ${proj.name}\n  Link: ${proj.link || "N/A"}\n  Description: ${proj.description}`);
+    r.projects.forEach((proj) => {
+      parts.push(`- Project: ${proj.name}\n  Link: ${proj.url || "N/A"}\n  Description: ${proj.description}`);
     });
   }
   if (r.certifications && r.certifications.length > 0) {
-    parts.push(`Certifications: ${r.certifications.join(", ")}`);
+    parts.push(`Certifications: ${r.certifications.map(c => `${c.name} (${c.issuer})`).join(", ")}`);
   }
   if (r.languages && r.languages.length > 0) {
-    parts.push(`Languages: ${r.languages.join(", ")}`);
+    parts.push(`Languages: ${r.languages.map(l => `${l.language} (${l.proficiency})`).join(", ")}`);
   }
   return parts.join("\n\n");
 }
@@ -66,6 +71,7 @@ export default function BuilderPage() {
   const [resume, setResume] = useState<BuilderResume>(createEmptyResume);
   const [activeTab, setActiveTab] = useState("contact");
   const [viewMode, setViewMode] = useState<"editor" | "preview">("editor");
+  const [showExportMenu, setShowExportMenu] = useState(false);
 
   const TABS_ORDER = ["contact", "summary", "experience", "education", "skills", "projects", "certifications", "template", "optimize"];
 
@@ -339,6 +345,83 @@ export default function BuilderPage() {
     */
   }, [status, resume]);
 
+  const exportToDocx = useCallback(() => {
+    const htmlContent = `
+      <html xmlns:o='urn:schemas-microsoft-error:office:office' xmlns:w='urn:schemas-microsoft-error:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+      <head><title>Resume</title><style>
+        body { font-family: Arial, sans-serif; font-size: 11pt; line-height: 1.5; color: #333; margin: 1in; }
+        h1 { font-size: 20pt; text-align: center; color: #111; margin-bottom: 5px; }
+        .contact-info { text-align: center; font-size: 10pt; color: #555; margin-bottom: 20px; }
+        h2 { font-size: 14pt; border-bottom: 1px solid #ddd; margin-top: 20px; padding-bottom: 3px; color: #222; text-transform: uppercase; }
+        .item { margin-bottom: 15px; }
+        .item-header { font-weight: bold; display: flex; justify-content: space-between; }
+        .skills-list { font-weight: bold; }
+      </style></head>
+      <body>
+        <h1>${resume.contact.fullName || "Resume"}</h1>
+        <div class="contact-info">
+          ${resume.contact.email ? `${resume.contact.email} | ` : ""}
+          ${resume.contact.phone ? `${resume.contact.phone} | ` : ""}
+          ${resume.contact.location ? `${resume.contact.location} | ` : ""}
+          ${resume.contact.website ? `${resume.contact.website}` : ""}
+        </div>
+        ${resume.summary ? `<h2>Professional Summary</h2><p>${resume.summary}</p>` : ""}
+        ${resume.experience && resume.experience.length > 0 ? `
+          <h2>Work Experience</h2>
+          ${resume.experience.map(exp => `
+            <div class="item">
+              <div class="item-header"><strong>${exp.title}</strong> at <strong>${exp.company}</strong> (${exp.startDate} to ${exp.endDate || 'Present'})</div>
+              ${exp.bullets && exp.bullets.length > 0 ? `<ul>${exp.bullets.map(b => `<li>${b}</li>`).join('')}</ul>` : ""}
+            </div>
+          `).join("")}
+        ` : ""}
+        ${resume.education && resume.education.length > 0 ? `
+          <h2>Education</h2>
+          ${resume.education.map(edu => `
+            <div class="item">
+              <div class="item-header"><strong>${edu.degree}</strong>, <strong>${edu.institution}</strong> (${edu.startDate} to ${edu.endDate})</div>
+            </div>
+          `).join("")}
+        ` : ""}
+        ${resume.skills && resume.skills.length > 0 ? `
+          <h2>Skills</h2>
+          <p class="skills-list">${resume.skills.map(s => s.name).join(", ")}</p>
+        ` : ""}
+      </body></html>
+    `;
+    const blob = new Blob(['\ufeff' + htmlContent], { type: 'application/msword' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${resume.contact.fullName || 'resume'}.doc`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, [resume]);
+
+  const handleShare = useCallback(async () => {
+    const shareUrl = window.location.origin + "/builder";
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `${resume.contact.fullName || 'My'} Resume`,
+          text: `Check out my resume generated via ResumeIQ!`,
+          url: shareUrl,
+        });
+      } catch {
+        // ignore
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        alert("Shareable link copied to clipboard!");
+      } catch {
+        alert(`Copy and share this link: ${shareUrl}`);
+      }
+    }
+  }, [resume.contact.fullName]);
+
   // Trigger payment automatically if ?pay=true query parameter is present on page load
   useEffect(() => {
     if (typeof window !== "undefined" && status === "authenticated") {
@@ -528,14 +611,50 @@ export default function BuilderPage() {
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 relative no-print">
               {saved && <Badge variant="success">Saved</Badge>}
               <Button variant="outline" onClick={autoSave} disabled={saving}>
                 <Save className="size-4" /> {saving ? "Saving..." : "Save"}
               </Button>
-              <Button variant="gradient" onClick={triggerPayment}>
-                <Download className="size-4" /> Export PDF
-              </Button>
+              <div className="relative">
+                <Button variant="gradient" onClick={() => setShowExportMenu(!showExportMenu)}>
+                  <Download className="size-4 mr-1.5" /> Export & Share
+                </Button>
+                {showExportMenu && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setShowExportMenu(false)} />
+                    <div className="absolute right-0 mt-2 w-48 rounded-lg border border-border bg-card p-1.5 shadow-xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                      <button
+                        onClick={() => {
+                          setShowExportMenu(false);
+                          triggerPayment();
+                        }}
+                        className="w-full rounded-md px-3 py-2 text-left text-xs font-semibold hover:bg-accent hover:text-accent-foreground flex items-center gap-2"
+                      >
+                        <FileText className="size-4 text-indigo-500" /> Export PDF
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowExportMenu(false);
+                          exportToDocx();
+                        }}
+                        className="w-full rounded-md px-3 py-2 text-left text-xs font-semibold hover:bg-accent hover:text-accent-foreground flex items-center gap-2"
+                      >
+                        <FileText className="size-4 text-blue-500" /> Export Word (DOC)
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowExportMenu(false);
+                          handleShare();
+                        }}
+                        className="w-full rounded-md px-3 py-2 text-left text-xs font-semibold hover:bg-accent hover:text-accent-foreground flex items-center gap-2"
+                      >
+                        <Sparkles className="size-4 text-emerald-500" /> Share Resume Link
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
 

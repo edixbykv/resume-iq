@@ -24,29 +24,34 @@ function convertBuilderResumeToText(r: any): string {
   if (r.experience && r.experience.length > 0) {
     parts.push("Work Experience:");
     r.experience.forEach((exp: any) => {
-      parts.push(`- Role: ${exp.role}\n  Company: ${exp.company}\n  Duration: ${exp.duration}\n  Description: ${exp.description}`);
+      const duration = `${exp.startDate} to ${exp.endDate || 'Present'}`;
+      const bulletsStr = exp.bullets && exp.bullets.length > 0
+        ? exp.bullets.map((b: string) => `- ${b}`).join("\n")
+        : "";
+      parts.push(`- Title: ${exp.title}\n  Company: ${exp.company}\n  Duration: ${duration}\n  Location: ${exp.location || 'N/A'}\n${bulletsStr}`);
     });
   }
   if (r.education && r.education.length > 0) {
     parts.push("Education:");
     r.education.forEach((edu: any) => {
-      parts.push(`- Degree: ${edu.degree}\n  School: ${edu.school}\n  Duration: ${edu.duration}`);
+      const duration = `${edu.startDate} to ${edu.endDate}`;
+      parts.push(`- Degree: ${edu.degree}${edu.field ? ` in ${edu.field}` : ''}\n  Institution: ${edu.institution}\n  Duration: ${duration}`);
     });
   }
   if (r.skills && r.skills.length > 0) {
-    parts.push(`Skills: ${r.skills.join(", ")}`);
+    parts.push(`Skills: ${r.skills.map((s: any) => s.name).join(", ")}`);
   }
   if (r.projects && r.projects.length > 0) {
     parts.push("Projects:");
     r.projects.forEach((proj: any) => {
-      parts.push(`- Project: ${proj.name}\n  Link: ${proj.link || "N/A"}\n  Description: ${proj.description}`);
+      parts.push(`- Project: ${proj.name}\n  Link: ${proj.url || "N/A"}\n  Description: ${proj.description}`);
     });
   }
   if (r.certifications && r.certifications.length > 0) {
-    parts.push(`Certifications: ${r.certifications.join(", ")}`);
+    parts.push(`Certifications: ${r.certifications.map((c: any) => `${c.name} (${c.issuer})`).join(", ")}`);
   }
   if (r.languages && r.languages.length > 0) {
-    parts.push(`Languages: ${r.languages.join(", ")}`);
+    parts.push(`Languages: ${r.languages.map((l: any) => `${l.language} (${l.proficiency})`).join(", ")}`);
   }
   return parts.join("\n\n");
 }
