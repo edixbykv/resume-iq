@@ -605,8 +605,16 @@ export default function BuilderPage() {
                 <Link href="/dashboard"><ArrowLeft className="size-4" /></Link>
               </Button>
               <div>
-                <h1 className="text-2xl font-bold tracking-tight">Resume Builder</h1>
-                <p className="text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={resume.title}
+                    onChange={(e) => setResume(r => ({ ...r, title: e.target.value }))}
+                    className="text-2xl font-bold tracking-tight bg-transparent border-b border-transparent hover:border-border/50 focus:border-primary focus:outline-none px-1 rounded-md text-foreground max-w-[200px] sm:max-w-md transition-all font-sans"
+                    placeholder="Resume Title"
+                  />
+                </div>
+                <p className="text-xs text-muted-foreground mt-0.5 px-1">
                   Build your resume with structured sections and live preview
                 </p>
               </div>
@@ -896,20 +904,99 @@ export default function BuilderPage() {
                   <Card className="p-5 space-y-4 bg-card border border-border hover:border-primary/20 transition-all shadow-md">
                     <div>
                       <label className="block text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Resume Template Layout</label>
-                      <div className="grid gap-2 sm:grid-cols-2">
-                        {(Object.entries(TEMPLATE_LABELS) as [ResumeTemplate, string][]).map(([key, label]) => (
-                          <button
-                            key={key}
-                            className={`rounded-lg border p-3 text-left text-sm transition-colors ${
-                              resume.template === key
-                                ? "border-primary bg-primary/10 font-medium"
-                                : "border-input hover:border-primary/40"
-                            }`}
-                            onClick={() => setTemplate(key)}
-                          >
-                            {label}
-                          </button>
-                        ))}
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        {(Object.entries(TEMPLATE_LABELS) as [ResumeTemplate, string][]).map(([key, label]) => {
+                          const preview = {
+                            "modern-professional": (
+                              <div className="w-full h-16 bg-muted/40 rounded border border-border/50 p-1 flex gap-1 mb-1.5 no-print">
+                                <div className="w-1/3 h-full bg-primary/10 rounded-sm flex flex-col gap-0.5 p-0.5">
+                                  <div className="w-3/4 h-1 bg-primary/30 rounded-full" />
+                                  <div className="w-1/2 h-0.5 bg-muted-foreground/20 rounded-full" />
+                                  <div className="w-5/6 h-0.5 bg-muted-foreground/20 rounded-full mt-1" />
+                                  <div className="w-2/3 h-0.5 bg-muted-foreground/20 rounded-full" />
+                                </div>
+                                <div className="flex-1 h-full flex flex-col gap-1 p-0.5">
+                                  <div className="w-1/2 h-1.5 bg-foreground/20 rounded-full" />
+                                  <div className="w-1/3 h-0.5 bg-muted-foreground/15 rounded-full" />
+                                  <div className="w-full h-0.5 bg-muted-foreground/15 rounded-full mt-0.5" />
+                                  <div className="w-5/6 h-0.5 bg-muted-foreground/15 rounded-full" />
+                                </div>
+                              </div>
+                            ),
+                            "classic-ats": (
+                              <div className="w-full h-16 bg-muted/40 rounded border border-border/50 p-1 flex flex-col gap-1 mb-1.5 justify-center no-print">
+                                <div className="w-1/3 h-1.5 bg-foreground/20 rounded-full mx-auto" />
+                                <div className="w-1/2 h-0.5 bg-muted-foreground/15 rounded-full mx-auto" />
+                                <div className="w-full h-0.5 bg-border mt-0.5" />
+                                <div className="flex justify-between w-full px-0.5">
+                                  <div className="w-1/4 h-1 bg-foreground/15 rounded-full" />
+                                  <div className="w-1/6 h-0.5 bg-muted-foreground/15 rounded-full" />
+                                </div>
+                                <div className="w-5/6 h-0.5 bg-muted-foreground/15 rounded-full px-0.5" />
+                              </div>
+                            ),
+                            "minimal-fresher": (
+                              <div className="w-full h-16 bg-muted/40 rounded border border-border/50 p-1 flex flex-col gap-1 mb-1.5 justify-center no-print">
+                                <div className="flex gap-1 items-center px-0.5">
+                                  <div className="size-3.5 rounded-full bg-primary/10 shrink-0" />
+                                  <div className="flex-1 flex flex-col gap-0.5">
+                                    <div className="w-1/2 h-1.5 bg-foreground/20 rounded-full" />
+                                    <div className="w-1/3 h-0.5 bg-muted-foreground/15 rounded-full" />
+                                  </div>
+                                </div>
+                                <div className="w-full h-0.5 bg-muted-foreground/15 rounded-full mt-0.5" />
+                                <div className="w-5/6 h-0.5 bg-muted-foreground/15 rounded-full" />
+                              </div>
+                            ),
+                            "technical": (
+                              <div className="w-full h-16 bg-muted/40 rounded border border-border/50 p-1 flex flex-col gap-1 mb-1.5 no-print">
+                                <div className="flex justify-between w-full px-0.5">
+                                  <div className="w-2/5 h-1.5 bg-foreground/20 rounded-full" />
+                                  <div className="w-1/4 h-0.5 bg-muted-foreground/15 rounded-full" />
+                                </div>
+                                <div className="w-full h-0.5 bg-primary/20" />
+                                <div className="grid grid-cols-2 gap-1 px-0.5 mt-0.5">
+                                  <div className="flex flex-col gap-0.5">
+                                    <div className="w-3/4 h-1 bg-foreground/15 rounded-full" />
+                                    <div className="w-full h-0.5 bg-muted-foreground/15 rounded-full" />
+                                  </div>
+                                  <div className="flex flex-col gap-0.5">
+                                    <div className="w-3/4 h-1 bg-foreground/15 rounded-full" />
+                                    <div className="w-full h-0.5 bg-muted-foreground/15 rounded-full" />
+                                  </div>
+                                </div>
+                              </div>
+                            ),
+                            "executive": (
+                              <div className="w-full h-16 bg-muted/40 rounded border border-border/50 p-1 flex gap-1 mb-1.5 no-print">
+                                <div className="flex-1 h-full flex flex-col gap-1 p-0.5">
+                                  <div className="w-2/3 h-1.5 bg-foreground/20 rounded-full" />
+                                  <div className="w-full h-0.5 bg-muted-foreground/15 rounded-full mt-0.5" />
+                                  <div className="w-5/6 h-0.5 bg-muted-foreground/15 rounded-full" />
+                                </div>
+                                <div className="w-1/4 h-full border-l border-border pl-1 flex flex-col gap-1 justify-center">
+                                  <div className="w-full h-1 bg-primary/20 rounded-full" />
+                                  <div className="w-3/4 h-0.5 bg-muted-foreground/15 rounded-full" />
+                                </div>
+                              </div>
+                            )
+                          }[key];
+
+                          return (
+                            <button
+                              key={key}
+                              className={`rounded-lg border p-2.5 text-left text-sm transition-all flex flex-col items-center justify-center ${
+                                resume.template === key
+                                  ? "border-primary bg-primary/5 font-medium shadow-sm ring-1 ring-primary/20"
+                                  : "border-input bg-card hover:border-primary/30"
+                              }`}
+                              onClick={() => setTemplate(key)}
+                            >
+                              {preview}
+                              <span className="text-xs font-semibold text-center mt-1">{label}</span>
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
 
