@@ -8,7 +8,10 @@ import { Footer } from "@/components/site/footer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Trash2, LogOut, ExternalLink, Loader2, BarChart3, User } from "lucide-react";
+import { 
+  FileText, Trash2, LogOut, ExternalLink, Loader2, BarChart3, User, 
+  Building2, Calendar, ClipboardList, Plus, Briefcase
+} from "lucide-react";
 import Link from "next/link";
 
 interface ResumeSummary {
@@ -28,6 +31,17 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
 
+  // Job Application Tracker States
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [applications, setApplications] = useState<any[]>([]);
+  const [loadingApps, setLoadingApps] = useState(true);
+  const [company, setCompany] = useState("");
+  const [role, setRole] = useState("");
+  const [notes, setNotes] = useState("");
+  const [appStatus, setAppStatus] = useState("APPLIED");
+  const [showAddApp, setShowAddApp] = useState(false);
+  const [savingApp, setSavingApp] = useState(false);
+
   const fetchResumes = useCallback(async () => {
     try {
       const res = await fetch("/api/resumes");
@@ -40,6 +54,18 @@ export default function DashboardPage() {
     }
   }, []);
 
+  const fetchApplications = useCallback(async () => {
+    try {
+      const res = await fetch("/api/applications");
+      const data = await res.json();
+      setApplications(data.applications ?? []);
+    } catch {
+      // ignore
+    } finally {
+      setLoadingApps(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/signin?callbackUrl=/dashboard");
@@ -49,9 +75,71 @@ export default function DashboardPage() {
 
     const handle = setTimeout(() => {
       fetchResumes();
+      fetchApplications();
     }, 0);
     return () => clearTimeout(handle);
-  }, [status, router, fetchResumes]);
+  }, [status, router, fetchResumes, fetchApplications]);
+
+  const handleCreateApplication = async () => {
+    if (!company || !role) {
+      alert("Please enter company name and role.");
+      return;
+    }
+    setSavingApp(true);
+    try {
+      const res = await fetch("/api/applications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ company, role, status: appStatus, notes }),
+      });
+      const data = await res.json();
+      if (res.ok && data.application) {
+        setApplications((prev) => [data.application, ...prev]);
+        setCompany("");
+        setRole("");
+        setNotes("");
+        setAppStatus("APPLIED");
+        setShowAddApp(false);
+      }
+    } catch {
+      alert("Failed to save application.");
+    } finally {
+      setSavingApp(false);
+    }
+  };
+
+  const handleUpdateStatus = async (id: string, nextStatus: string) => {
+    try {
+      const res = await fetch("/api/applications", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, status: nextStatus }),
+      });
+      if (res.ok) {
+        setApplications((prev) =>
+          prev.map((app) => (app.id === id ? { ...app, status: nextStatus } : app))
+        );
+      }
+    } catch {
+      alert("Failed to update status.");
+    }
+  };
+
+  const handleDeleteApplication = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this job tracking record?")) return;
+    try {
+      const res = await fetch("/api/applications", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      if (res.ok) {
+        setApplications((prev) => prev.filter((app) => app.id !== id));
+      }
+    } catch {
+      alert("Failed to delete record.");
+    }
+  };
 
   async function handleDelete(id: string) {
     if (!confirm("Delete this saved analysis? This cannot be undone.")) return;
@@ -107,7 +195,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Stats */}
-          <div className="mb-8 grid gap-4 sm:grid-cols-3">
+          <div className="mb-8 grid gap-4 sm:grid-cols-4">
             <Card className="p-5">
               <div className="flex items-center gap-3">
                 <div className="grid size-10 place-items-center rounded-lg bg-primary/10 text-primary">
@@ -131,6 +219,17 @@ export default function DashboardPage() {
                       : "—"}
                   </div>
                   <div className="text-xs text-muted-foreground">Avg score</div>
+                </div>
+              </div>
+            </Card>
+            <Card className="p-5">
+              <div className="flex items-center gap-3">
+                <div className="grid size-10 place-items-center rounded-lg bg-indigo-500/10 text-indigo-500">
+                  <Briefcase className="size-5" />
+                </div>
+                <div>
+                  <div className="text-2xl font-bold">{applications.length}</div>
+                  <div className="text-xs text-muted-foreground">Applications</div>
                 </div>
               </div>
             </Card>
@@ -212,6 +311,132 @@ export default function DashboardPage() {
               ))}
             </div>
           )}
+
+          {/* Job Application Tracker */}
+          <div className="mt-12 border-t border-border/60 pt-10 space-y-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-semibold flex items-center gap-2">
+                  <Briefcase className="size-5 text-primary" />
+                  One-click Apply Tracker
+                </h2>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Track your job applications, interview timelines, and hiring statuses in one central portal.
+                </p>
+              </div>
+              <Button onClick={() => setShowAddApp(!showAddApp)} variant="outline" size="sm">
+                <Plus className="size-4 mr-1.5" /> {showAddApp ? "Close form" : "Add Application"}
+              </Button>
+            </div>
+
+            {showAddApp && (
+              <Card className="p-5 border border-primary/20 bg-card/40 animate-in slide-in-from-top-4 duration-200">
+                <div className="grid gap-4 sm:grid-cols-3">
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-slate-400">Company Name</label>
+                    <input
+                      className="w-full rounded-lg border border-input bg-background px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-primary"
+                      placeholder="e.g. Google"
+                      value={company}
+                      onChange={(e) => setCompany(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-slate-400">Target Role</label>
+                    <input
+                      className="w-full rounded-lg border border-input bg-background px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-primary"
+                      placeholder="e.g. Backend Engineer"
+                      value={role}
+                      onChange={(e) => setRole(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-slate-400">Current Status</label>
+                    <select
+                      className="w-full rounded-lg border border-input bg-background px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-primary"
+                      value={appStatus}
+                      onChange={(e) => setAppStatus(e.target.value)}
+                    >
+                      <option value="APPLIED">Applied</option>
+                      <option value="INTERVIEWING">Interviewing</option>
+                      <option value="OFFERED">Offered</option>
+                      <option value="REJECTED">Rejected</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="mt-3 space-y-1">
+                  <label className="text-xs font-semibold text-slate-400">Notes / Details (Optional)</label>
+                  <textarea
+                    className="w-full min-h-[60px] rounded-lg border border-input bg-background p-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-primary"
+                    placeholder="e.g. Recruiter contacted via LinkedIn, Round 1 scheduled on Friday..."
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                  />
+                </div>
+                <div className="mt-4 flex justify-end gap-2">
+                  <Button variant="ghost" size="sm" onClick={() => setShowAddApp(false)}>
+                    Cancel
+                  </Button>
+                  <Button variant="gradient" size="sm" onClick={handleCreateApplication} disabled={savingApp}>
+                    {savingApp ? "Saving..." : "Add to Tracker"}
+                  </Button>
+                </div>
+              </Card>
+            )}
+
+            {loadingApps ? (
+              <div className="flex items-center justify-center py-10">
+                <Loader2 className="size-6 animate-spin text-muted-foreground" />
+              </div>
+            ) : applications.length === 0 ? (
+              <Card className="p-8 text-center text-slate-500 border border-dashed border-slate-800">
+                <ClipboardList className="mx-auto size-10 text-muted-foreground/30" />
+                <p className="text-sm mt-3">No jobs tracked yet. Start organizing your applications!</p>
+              </Card>
+            ) : (
+              <div className="space-y-2">
+                {applications.map((app) => (
+                  <Card key={app.id} className="p-4 flex items-center justify-between gap-4 transition-colors hover:border-primary/20">
+                    <div className="flex items-center gap-3">
+                      <div className="grid size-10 place-items-center rounded-lg bg-primary/10 text-primary">
+                        <Building2 className="size-5" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-sm">{app.company}</span>
+                          <span className="text-xs text-muted-foreground font-medium">— {app.role}</span>
+                        </div>
+                        <div className="flex items-center gap-3 mt-1 text-[11px] text-muted-foreground">
+                          <span className="flex items-center gap-1"><Calendar className="size-3" /> {new Date(app.date).toLocaleDateString()}</span>
+                          {app.notes && <span className="truncate max-w-[200px] sm:max-w-[400px]">· {app.notes}</span>}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <select
+                        className="rounded-lg border border-input bg-background px-2.5 py-1 text-xs focus:outline-none"
+                        value={app.status}
+                        onChange={(e) => handleUpdateStatus(app.id, e.target.value)}
+                      >
+                        <option value="APPLIED">Applied</option>
+                        <option value="INTERVIEWING">Interviewing</option>
+                        <option value="OFFERED">Offered</option>
+                        <option value="REJECTED">Rejected</option>
+                      </select>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-destructive hover:text-destructive p-2"
+                        onClick={() => handleDeleteApplication(app.id)}
+                      >
+                        <Trash2 className="size-4" />
+                      </Button>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </main>
       <Footer />

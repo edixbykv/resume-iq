@@ -22,6 +22,14 @@ export interface BuilderResume {
   languages: LanguageEntry[];
   sections: SectionConfig[];
   metadata: BuilderMetadata;
+  styles?: ResumeCustomStyles;
+}
+
+export interface ResumeCustomStyles {
+  fontFamily?: string;
+  primaryColor?: string;
+  spacing?: "compact" | "normal" | "loose";
+  margin?: "small" | "normal" | "large";
 }
 
 export type ResumeTemplate = "modern-professional" | "classic-ats" | "minimal-fresher" | "technical" | "executive";
@@ -146,6 +154,12 @@ export function createEmptyResume(): BuilderResume {
       updatedAt: now,
       version: 1,
       autoSaved: false,
+    },
+    styles: {
+      fontFamily: "font-sans",
+      primaryColor: "indigo",
+      spacing: "normal",
+      margin: "normal",
     },
   };
 }
