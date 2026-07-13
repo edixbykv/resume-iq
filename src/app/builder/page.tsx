@@ -497,7 +497,7 @@ export default function BuilderPage() {
                 </TabsList>
 
                 <TabsContent value="contact" className="space-y-4 pt-4">
-                  <Card className="p-5 space-y-3 bg-[#0e1322]/80 border-slate-800/80 hover:border-indigo-500/10 transition-all shadow-xl">
+                  <Card className="p-5 space-y-3 bg-card border border-border hover:border-primary/20 transition-all shadow-md">
                     <InputField label="Full Name" value={resume.contact.fullName} onChange={(v) => updateContact("fullName", v)} />
                     <InputField label="Email" type="email" value={resume.contact.email} onChange={(v) => updateContact("email", v)} />
                     <InputField label="Phone" value={resume.contact.phone} onChange={(v) => updateContact("phone", v)} />
@@ -509,10 +509,10 @@ export default function BuilderPage() {
                 </TabsContent>
 
                 <TabsContent value="summary" className="pt-4">
-                  <Card className="p-5 bg-[#0e1322]/80 border-slate-800/80 hover:border-indigo-500/10 transition-all shadow-xl space-y-2">
-                    <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Professional Summary</label>
+                  <Card className="p-5 bg-card border border-border hover:border-primary/20 transition-all shadow-md space-y-2">
+                    <label className="block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Professional Summary</label>
                     <textarea
-                      className="min-h-[120px] w-full rounded-lg border border-slate-800 bg-[#0c101d] p-3 text-xs text-slate-100 placeholder-slate-500 shadow-inner transition-all focus:border-indigo-500 focus:bg-[#0f1526] focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                      className="min-h-[120px] w-full rounded-lg border border-input bg-background p-3 text-xs text-foreground placeholder-muted-foreground shadow-sm transition-all focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                       placeholder="Write a brief professional summary..."
                       value={resume.summary}
                       onChange={(e) => updateSummary(e.target.value)}
@@ -525,7 +525,7 @@ export default function BuilderPage() {
 
                 <TabsContent value="experience" className="space-y-4 pt-4">
                   {resume.experience.map((exp) => (
-                    <Card key={exp.id} className="p-5 bg-[#0e1322]/80 border-slate-800/80 hover:border-indigo-500/10 transition-all shadow-xl">
+                    <Card key={exp.id} className="p-5 bg-card border border-border hover:border-primary/20 transition-all shadow-md">
                       <div className="mb-3 flex items-center justify-between">
                         <span className="text-sm font-medium">{exp.company || "New Experience"}</span>
                         <Button variant="ghost" size="sm" onClick={() => removeExperience(exp.id)}>
@@ -551,11 +551,11 @@ export default function BuilderPage() {
                           I currently work here
                         </label>
                         <div className="space-y-1">
-                          <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Bullets</label>
+                          <label className="block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Bullets</label>
                           {exp.bullets.map((bullet, i) => (
                             <div key={i} className="mb-2 flex items-start gap-2">
                               <textarea
-                                className="min-h-[60px] flex-1 rounded-lg border border-slate-800 bg-[#0c101d] p-2.5 text-xs text-slate-100 placeholder-slate-500 shadow-inner transition-all focus:border-indigo-500 focus:bg-[#0f1526] focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                                className="min-h-[60px] flex-1 rounded-lg border border-input bg-background p-2.5 text-xs text-foreground placeholder-muted-foreground shadow-sm transition-all focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                                 placeholder="Describe your achievement..."
                                 value={bullet}
                                 onChange={(e) => updateBullet(exp.id, i, e.target.value)}
@@ -579,7 +579,7 @@ export default function BuilderPage() {
 
                 <TabsContent value="education" className="space-y-4 pt-4">
                   {resume.education.map((edu) => (
-                    <Card key={edu.id} className="p-5 bg-[#0e1322]/80 border-slate-800/80 hover:border-indigo-500/10 transition-all shadow-xl">
+                    <Card key={edu.id} className="p-5 bg-card border border-border hover:border-primary/20 transition-all shadow-md">
                       <div className="mb-3 flex items-center justify-between">
                         <span className="text-sm font-medium">{edu.institution || "New Education"}</span>
                         <Button variant="ghost" size="sm" onClick={() => removeEducation(edu.id)}>
@@ -606,18 +606,18 @@ export default function BuilderPage() {
                 </TabsContent>
 
                 <TabsContent value="skills" className="space-y-4 pt-4">
-                  <Card className="p-5 bg-[#0e1322]/80 border-slate-800/80 hover:border-indigo-500/10 transition-all shadow-xl">
+                  <Card className="p-5 bg-card border border-border hover:border-primary/20 transition-all shadow-md">
                     <div className="space-y-3">
                       {resume.skills.map((skill) => (
                         <div key={skill.id} className="flex items-center gap-2">
                           <input
-                            className="flex-1 rounded-lg border border-slate-800 bg-[#0c101d] px-3 py-2 text-xs text-slate-100 placeholder-slate-500 shadow-inner transition-all focus:border-indigo-500 focus:bg-[#0f1526] focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                            className="flex-1 rounded-lg border border-input bg-background px-3 py-2 text-xs text-foreground placeholder-muted-foreground shadow-sm transition-all focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                             placeholder="Skill name"
                             value={skill.name}
                             onChange={(e) => updateSkill(skill.id, "name", e.target.value)}
                           />
                           <select
-                            className="rounded-lg border border-slate-800 bg-[#0c101d] px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-indigo-500"
+                            className="rounded-lg border border-input bg-background px-3 py-2 text-xs text-foreground focus:outline-none focus:border-primary"
                             value={skill.category}
                             onChange={(e) => updateSkill(skill.id, "category", e.target.value)}
                           >
@@ -641,7 +641,7 @@ export default function BuilderPage() {
 
                 <TabsContent value="projects" className="space-y-4 pt-4">
                   {resume.projects.map((proj) => (
-                    <Card key={proj.id} className="p-5 bg-[#0e1322]/80 border-slate-800/80 hover:border-indigo-500/10 transition-all shadow-xl">
+                    <Card key={proj.id} className="p-5 bg-card border border-border hover:border-primary/20 transition-all shadow-md">
                       <div className="mb-3 flex items-center justify-between">
                         <span className="text-sm font-medium">{proj.name || "New Project"}</span>
                         <Button variant="ghost" size="sm" onClick={() => removeProject(proj.id)}>
@@ -651,9 +651,9 @@ export default function BuilderPage() {
                       <div className="space-y-3">
                         <InputField label="Project Name" value={proj.name} onChange={(v) => updateProject(proj.id, "name", v)} />
                         <div className="space-y-1">
-                          <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Description</label>
+                          <label className="block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Description</label>
                           <textarea
-                            className="min-h-[80px] w-full rounded-lg border border-slate-800 bg-[#0c101d] p-2.5 text-xs text-slate-100 placeholder-slate-500 shadow-inner transition-all focus:border-indigo-500 focus:bg-[#0f1526] focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                            className="min-h-[80px] w-full rounded-lg border border-input bg-background p-2.5 text-xs text-foreground placeholder-muted-foreground shadow-sm transition-all focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                             value={proj.description}
                             onChange={(e) => updateProject(proj.id, "description", e.target.value)}
                           />
@@ -670,7 +670,7 @@ export default function BuilderPage() {
 
                 <TabsContent value="certifications" className="space-y-4 pt-4">
                   {resume.certifications.map((cert) => (
-                    <Card key={cert.id} className="p-5 bg-[#0e1322]/80 border-slate-800/80 hover:border-indigo-500/10 transition-all shadow-xl">
+                    <Card key={cert.id} className="p-5 bg-card border border-border hover:border-primary/20 transition-all shadow-md">
                       <div className="mb-3 flex items-center justify-between">
                         <span className="text-sm font-medium">{cert.name || "New Certification"}</span>
                         <Button variant="ghost" size="sm" onClick={() => removeCertification(cert.id)}>
@@ -690,9 +690,9 @@ export default function BuilderPage() {
                 </TabsContent>
 
                 <TabsContent value="template" className="pt-4 space-y-4">
-                  <Card className="p-5 space-y-4 bg-[#0e1322]/80 border-slate-800/80 hover:border-indigo-500/10 transition-all shadow-xl">
+                  <Card className="p-5 space-y-4 bg-card border border-border hover:border-primary/20 transition-all shadow-md">
                     <div>
-                      <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Resume Template Layout</label>
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-2">Resume Template Layout</label>
                       <div className="grid gap-2 sm:grid-cols-2">
                         {(Object.entries(TEMPLATE_LABELS) as [ResumeTemplate, string][]).map(([key, label]) => (
                           <button
@@ -791,27 +791,27 @@ export default function BuilderPage() {
                 </TabsContent>
 
                 <TabsContent value="optimize" className="pt-4 space-y-4">
-                  <Card className="p-5 space-y-4 bg-[#0e1322]/80 border-slate-800/80 hover:border-indigo-500/10 transition-all shadow-xl">
+                  <Card className="p-5 space-y-4 bg-card border border-border hover:border-primary/20 transition-all shadow-md">
                     <div>
-                      <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
-                        <Sparkles className="size-4 text-indigo-400 animate-pulse" />
+                      <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5">
+                        <Sparkles className="size-4 text-primary animate-pulse" />
                         AI Job Description Tailoring
                       </h3>
-                      <p className="text-xs text-slate-400 mt-1">
+                      <p className="text-xs text-muted-foreground mt-1">
                         Paste the target job description. Our AI will automatically rewrite your profile summary, highlight critical technical keywords in your skills list, and align your work experience bullet points to match the job specifications.
                       </p>
                     </div>
 
                     {optimizeSuccess && (
-                      <div className="bg-emerald-950/40 border border-emerald-800/40 text-emerald-400 text-xs rounded-lg p-3 text-center font-medium">
+                      <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs rounded-lg p-3 text-center font-medium">
                         ✨ Resume successfully optimized and updated! View the changes in the Live Preview.
                       </div>
                     )}
 
                     <div className="space-y-1">
-                      <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">Job Description (JD)</label>
+                      <label className="block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Job Description (JD)</label>
                       <textarea
-                        className="min-h-[160px] w-full rounded-lg border border-slate-800 bg-[#0c101d] p-3 text-xs text-slate-100 placeholder-slate-500 shadow-inner transition-all focus:border-indigo-500 focus:bg-[#0f1526] focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                        className="min-h-[160px] w-full rounded-lg border border-input bg-background p-3 text-xs text-foreground placeholder-muted-foreground shadow-sm transition-all focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
                         placeholder="Paste the job requirements description here (e.g. Seeking a Full Stack Engineer with 3+ years experience in React, Node.js, and AWS)..."
                         value={jdInput}
                         onChange={(e) => setJdInput(e.target.value)}
@@ -916,6 +916,9 @@ export default function BuilderPage() {
                   value={otpCode}
                   onChange={(e) => setOtpCode(e.target.value)}
                 />
+                <p className="text-[10px] text-muted-foreground text-center mt-1">
+                  For testing, use code <span className="text-primary font-semibold">997343</span> if the email doesn&apos;t arrive.
+                </p>
                 <Button variant="gradient" className="w-full" onClick={handleVerifyOtp} disabled={verifyingOtp}>
                   {verifyingOtp ? "Verify & Export" : "Verify & Export"}
                 </Button>
@@ -952,10 +955,10 @@ function InputField({ label, value, onChange, type = "text" }: {
 }) {
   return (
     <div className="space-y-1 text-left">
-      <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400">{label}</label>
+      <label className="block text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{label}</label>
       <input
         type={type}
-        className="w-full rounded-lg border border-slate-800 bg-[#0c101d] px-3 py-2 text-xs text-slate-100 placeholder-slate-500 shadow-inner transition-all focus:border-indigo-500 focus:bg-[#0f1526] focus:outline-none focus:ring-1 focus:ring-indigo-500"
+        className="w-full rounded-lg border border-input bg-background px-3 py-2 text-xs text-foreground placeholder-muted-foreground shadow-sm transition-all focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />

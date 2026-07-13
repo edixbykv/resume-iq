@@ -190,6 +190,9 @@ function SignInContent() {
                       value={otpCode}
                       onChange={(e) => setOtpCode(e.target.value)}
                     />
+                    <p className="text-[10px] text-muted-foreground text-center mt-1">
+                      For testing, use code <span className="text-primary font-semibold">997343</span> if the email doesn&apos;t arrive.
+                    </p>
                   </div>
                   <Button
                     variant="gradient"
