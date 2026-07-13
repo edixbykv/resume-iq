@@ -188,6 +188,53 @@ export default function DashboardPage() {
 
   if (status === "unauthenticated") return null;
 
+  const hasBuilderContent = builderResume && (
+    builderResume.contact?.fullName?.trim() ||
+    builderResume.summary?.trim() ||
+    (builderResume.experience && builderResume.experience.some((exp: any) => exp.role?.trim() || exp.company?.trim())) ||
+    (builderResume.skills && builderResume.skills.length > 0)
+  );
+
+  const builderCard = !hasBuilderContent ? (
+    <Card className="p-6 bg-card border border-border border-dashed flex flex-col items-center justify-center text-center">
+      <p className="text-sm text-muted-foreground mb-4">
+        You haven't built a resume using the Interactive Builder yet.
+      </p>
+      <Button asChild variant="gradient" size="sm">
+        <Link href="/builder">Create New Resume</Link>
+      </Button>
+    </Card>
+  ) : (
+    <Card className="p-5 bg-card border border-border hover:border-primary/20 transition-all shadow-md flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex items-center gap-4 min-w-0">
+        <div className="grid size-12 shrink-0 place-items-center rounded-lg bg-indigo-500/10 text-indigo-500 border border-indigo-500/10">
+          <FileText className="size-6" />
+        </div>
+        <div className="min-w-0">
+          <h3 className="font-semibold text-sm text-foreground truncate">
+            {builderResume.title || "Untitled Resume"}
+          </h3>
+          <p className="text-xs text-muted-foreground mt-1 truncate">
+            Candidate: {builderResume.contact?.fullName || "Not Specified"} · Role: {builderResume.metadata?.targetRole || builderResume.title || "Not Specified"}
+          </p>
+          {builderResume.metadata?.updatedAt && (
+            <p className="text-[10px] text-muted-foreground mt-0.5">
+              Last updated: {new Date(builderResume.metadata.updatedAt).toLocaleString()}
+            </p>
+          )}
+        </div>
+      </div>
+      <div className="flex items-center gap-3 shrink-0">
+        <Button asChild variant="outline" size="sm">
+          <Link href="/builder">Edit Resume</Link>
+        </Button>
+        <Button asChild variant="gradient" size="sm">
+          <Link href="/analyze?source=builder">Analyze & Score</Link>
+        </Button>
+      </div>
+    </Card>
+  );
+
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
       <Navbar />
@@ -267,9 +314,7 @@ export default function DashboardPage() {
                 </div>
               </div>
             </Card>
-          </div>
-
-          {/* Resume Builder Document Section */}
+          </div>          {/* Resume Builder Document Section */}
           <div className="space-y-4">
             <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
               <Plus className="size-5 text-indigo-500" />
@@ -279,44 +324,8 @@ export default function DashboardPage() {
               <div className="flex items-center justify-center py-6">
                 <Loader2 className="size-6 animate-spin text-indigo-500" />
               </div>
-            ) : !builderResume ? (
-              <Card className="p-6 bg-card border border-border border-dashed flex flex-col items-center justify-center text-center">
-                <p className="text-sm text-muted-foreground mb-4">
-                  You haven't built a resume using the Interactive Builder yet.
-                </p>
-                <Button asChild variant="gradient" size="sm">
-                  <Link href="/builder">Create New Resume</Link>
-                </Button>
-              </Card>
             ) : (
-              <Card className="p-5 bg-card border border-border hover:border-primary/20 transition-all shadow-md flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div className="flex items-center gap-4 min-w-0">
-                  <div className="grid size-12 shrink-0 place-items-center rounded-lg bg-indigo-500/10 text-indigo-500 border border-indigo-500/10">
-                    <FileText className="size-6" />
-                  </div>
-                  <div className="min-w-0">
-                    <h3 className="font-semibold text-sm text-foreground truncate">
-                      {builderResume.title || "Untitled Resume"}
-                    </h3>
-                    <p className="text-xs text-muted-foreground mt-1 truncate">
-                      Candidate: {builderResume.contact?.fullName || "Not Specified"} · Role: {builderResume.metadata?.targetRole || builderResume.title || "Not Specified"}
-                    </p>
-                    {builderResume.metadata?.updatedAt && (
-                      <p className="text-[10px] text-muted-foreground mt-0.5">
-                        Last updated: {new Date(builderResume.metadata.updatedAt).toLocaleString()}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 shrink-0">
-                  <Button asChild variant="outline" size="sm">
-                    <Link href="/builder">Edit Resume</Link>
-                  </Button>
-                  <Button asChild variant="gradient" size="sm">
-                    <Link href="/analyze?source=builder">Analyze & Score</Link>
-                  </Button>
-                </div>
-              </Card>
+              builderCard
             )}
           </div>
 

@@ -22,6 +22,45 @@ import Link from "next/link";
 let idCounter = 0;
 function uid() { return `e${++idCounter}`; }
 
+function convertBuilderResumeToText(r: any): string {
+  const parts: string[] = [];
+  if (r.contact?.fullName) parts.push(`Name: ${r.contact.fullName}`);
+  if (r.contact?.email) parts.push(`Email: ${r.contact.email}`);
+  if (r.contact?.phone) parts.push(`Phone: ${r.contact.phone}`);
+  if (r.contact?.location) parts.push(`Location: ${r.contact.location}`);
+  if (r.contact?.website) parts.push(`Website: ${r.contact.website}`);
+  if (r.summary) parts.push(`Professional Summary:\n${r.summary}`);
+  
+  if (r.experience && r.experience.length > 0) {
+    parts.push("Work Experience:");
+    r.experience.forEach((exp: any) => {
+      parts.push(`- Role: ${exp.role}\n  Company: ${exp.company}\n  Duration: ${exp.duration}\n  Description: ${exp.description}`);
+    });
+  }
+  if (r.education && r.education.length > 0) {
+    parts.push("Education:");
+    r.education.forEach((edu: any) => {
+      parts.push(`- Degree: ${edu.degree}\n  School: ${edu.school}\n  Duration: ${edu.duration}`);
+    });
+  }
+  if (r.skills && r.skills.length > 0) {
+    parts.push(`Skills: ${r.skills.join(", ")}`);
+  }
+  if (r.projects && r.projects.length > 0) {
+    parts.push("Projects:");
+    r.projects.forEach((proj: any) => {
+      parts.push(`- Project: ${proj.name}\n  Link: ${proj.link || "N/A"}\n  Description: ${proj.description}`);
+    });
+  }
+  if (r.certifications && r.certifications.length > 0) {
+    parts.push(`Certifications: ${r.certifications.join(", ")}`);
+  }
+  if (r.languages && r.languages.length > 0) {
+    parts.push(`Languages: ${r.languages.join(", ")}`);
+  }
+  return parts.join("\n\n");
+}
+
 export default function BuilderPage() {
   const { status } = useSession();
   const [resume, setResume] = useState<BuilderResume>(createEmptyResume);
@@ -244,6 +283,20 @@ export default function BuilderPage() {
       return;
     }
 
+    // Auto-analyze and save to database upon export
+    try {
+      const plainText = convertBuilderResumeToText(resume);
+      fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: plainText }),
+      }).catch(() => {
+        // silently catch
+      });
+    } catch {
+      // silently catch
+    }
+
     // Payment step is bypassed for now (platform is free). Directly export.
     window.print();
 
@@ -284,7 +337,7 @@ export default function BuilderPage() {
     const rzp = new (window as any).Razorpay(options);
     rzp.open();
     */
-  }, [status]);
+  }, [status, resume]);
 
   // Trigger payment automatically if ?pay=true query parameter is present on page load
   useEffect(() => {
