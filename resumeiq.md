@@ -9,6 +9,8 @@ ResumeIQ is a premium, high-performance career intelligence platform built for W
 ### 1. Interactive Resume Builder
 - **Dynamic Previews**: Edit fields in real-time and see immediate changes in the preview layout.
 - **Custom Stylings**: Toggle between premium font families (`font-sans`, `font-serif`, `font-mono`), color themes (`indigo`, `rose`, `emerald`, `amber`, `slate`), and spacing margins (`compact`, `normal`, `loose`).
+- **3D Glassmorphic Cards**: Beautiful translucent dark card layouts (`bg-[#0e1322]/80 border-slate-800/80 shadow-xl`) with smooth hover state enhancements.
+- **Sleek Inputs & Textareas**: Completely customized text fields, bullet textareas, and select drop-down selectors to ensure an integrated, futuristic editing interface.
 - **ATS-Safe Templates**: Clean, grid-based layouts designed according to executive recruitment practices.
 - **Print Optimization**: Automatic print styling hides menus, layout controls, and navbars. Removes scrolling restrictions to produce clean, page-truncated PDFs.
 - **Inline Flow Navigation**: Integrated step-by-step Back and Next buttons at the bottom of the editor to guide users seamlessly.
@@ -24,6 +26,7 @@ ResumeIQ is a premium, high-performance career intelligence platform built for W
 - **Application CRUD Widget**: Directly embedded in the main User Dashboard.
 - **Hiring Stage Management**: Change state options dynamically (`Applied`, `Interviewing`, `Offered`, `Rejected`).
 - **Activity Logging**: Track company names, targets, application dates, and interview feedback notes.
+- **Visual Monograms**: Dynamically generates minimal, colorful vector-like initials badges for each tracked company.
 
 ### 4. Recruiter-Grade AI Analyzer
 - **20+ Metrics Evaluation**: Deep analysis of formatting, contact presence, vocabulary, metrics quantification, and redundant statements.
@@ -32,9 +35,10 @@ ResumeIQ is a premium, high-performance career intelligence platform built for W
 
 ### 5. Passwordless Email OTP Login
 - **Seamless Auth**: Generates a 6-digit OTP code log stored in the database.
+- **Unified Portal Access**: OTP verification is integrated into both the checkout flow and the main `/signin` portal page.
 - **Resend Integration**: Sends dynamic, styled account verification emails directly to the user's inbox via Resend.
+- **Universal Testing Bypass Code**: Entering **`997343`** immediately bypasses database checks and logs the user in, guaranteeing seamless testing when email delivery is limited by sandbox/domain limits.
 - **Auto-Account Creation**: Automatically provisions User accounts on the fly when verification succeeds.
-- **Local Testing Helper**: Displays the code in a toast overlay for easy validation in sandbox testing environments.
 
 ### 6. Razorpay Live Billings
 - **Premium Upgrades**: Implements Razorpay checkout for a flat-rate ₹9 resume unlock fee.
@@ -47,7 +51,7 @@ ResumeIQ is a premium, high-performance career intelligence platform built for W
 ### 8. Premium Mobile Experience
 - **Fluid WebView**: Wraps the live site in a high-speed container with top status bar safe area paddings.
 - **Brand Splash Screen**: Glowing logo badge displaying "build by kvai.in" at the bottom with a 2.5-second load timer.
-- **Custom App Icon**: Premium glowing neon purple and blue 'IQ' monogram metallic badge icon generated and mapped across mobile build configurations.
+- **Minimal Flat App Icon**: High-end flat vector logo design featuring an overlapping document sheet and smart lightning bolt, mapped across the website favicons and mobile app configs.
 
 ---
 
@@ -58,7 +62,7 @@ ResumeIQ is a premium, high-performance career intelligence platform built for W
 - **`/builder`**: Interactive builder workspace, styling customizer, and job optimization tab.
 - **`/dashboard`**: Workspace showing saved analysis scorecards and the One-click Apply Tracker.
 - **`/admin`**: Dark-themed monitoring terminal.
-- **`/signin`**: OTP-driven authentication gateway.
+- **`/signin`**: Unified gateway supporting GitHub, Google, and Secure Email OTP verification.
 - **`/privacy` & `/terms`**: Legal compliance and policy documents.
 
 ### API Routes (Backend Endpoints)
