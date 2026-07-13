@@ -71,9 +71,9 @@ providers.push(
 
       if (!log) return null;
 
-      // Timezone-safe JavaScript verification: check if generated within past 15 mins
+      // Timezone-safe JavaScript verification: check if generated within past 24 hours
       const ageMs = Date.now() - new Date(log.createdAt).getTime();
-      if (ageMs > 15 * 60 * 1000) return null;
+      if (ageMs > 24 * 60 * 60 * 1000) return null;
 
       // Mark OTP as verified
       try {
