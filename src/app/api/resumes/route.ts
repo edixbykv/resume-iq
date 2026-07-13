@@ -114,3 +114,54 @@ export async function getResumeById(id: string) {
   delete safe.userId;
   return NextResponse.json(safe);
 }
+
+/**
+ * POST /api/resumes - Save an analysis to the database for the authenticated user.
+ */
+export async function POST(req: NextRequest) {
+  try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Not authenticated." }, { status: 401 });
+    }
+
+    if (!dbEnabled) {
+      return NextResponse.json({ error: "Database not configured." }, { status: 503 });
+    }
+
+    const { result, fileName } = await req.json();
+    if (!result) {
+      return NextResponse.json({ error: "Analysis result is required." }, { status: 400 });
+    }
+
+    // Check if this analysis already exists for this user to prevent duplicates
+    const existing = await prisma.resume.findFirst({
+      where: {
+        userId: session.user.id,
+        overallScore: result.overallScore,
+        candidateName: result.fields?.name ?? null,
+      },
+    });
+
+    if (existing) {
+      return NextResponse.json({ success: true, resume: existing });
+    }
+
+    const saved = await prisma.resume.create({
+      data: {
+        userId: session.user.id,
+        fileName: fileName ?? "pasted.txt",
+        candidateName: result.fields?.name ?? null,
+        overallScore: result.overallScore,
+        grade: result.grade,
+        bestFitRole: result.careerPath?.bestFitRole ?? null,
+        analysis: result as unknown as object,
+      },
+    });
+
+    return NextResponse.json({ success: true, resume: saved });
+  } catch (err) {
+    console.error("resume save error", err);
+    return NextResponse.json({ error: "Failed to save resume report." }, { status: 500 });
+  }
+}

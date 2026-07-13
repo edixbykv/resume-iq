@@ -81,6 +81,12 @@ export default function AnalyzePage() {
         return;
       }
       setResult(data);
+      try {
+        localStorage.setItem("resume_iq_latest_analysis", JSON.stringify(data));
+        localStorage.setItem("resume_iq_latest_analysis_name", payload.file ? payload.file.name : "pasted.txt");
+      } catch {
+        // ignore
+      }
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
       setError("Network error. Please try again.");
@@ -96,6 +102,29 @@ export default function AnalyzePage() {
     async function loadSavedOrBuilderResume() {
       setLoadingInitial(true);
       try {
+        // 0. Sync unsynced guest analysis to user account first
+        const localResultStr = localStorage.getItem("resume_iq_latest_analysis");
+        const localName = localStorage.getItem("resume_iq_latest_analysis_name") || "pasted.txt";
+        if (localResultStr) {
+          try {
+            const localResult = JSON.parse(localResultStr);
+            const saveRes = await fetch("/api/resumes", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ result: localResult, fileName: localName }),
+            });
+            if (saveRes.ok) {
+              localStorage.removeItem("resume_iq_latest_analysis");
+              localStorage.removeItem("resume_iq_latest_analysis_name");
+              setResult(localResult);
+              setNotice("Saved your latest resume analysis to your profile.");
+              return;
+            }
+          } catch (e) {
+            console.error("Failed to sync guest analysis:", e);
+          }
+        }
+
         const params = new URLSearchParams(window.location.search);
         const sourceParam = params.get("source");
 
