@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
 
     // Send real email using Resend API key
     try {
-      const resendApiKey = "re_fCRrfGxV_GpFwumoXLigj4BSjF71YfRus";
+      const resendApiKey = process.env.RESEND_API_KEY || "re_fCRrfGxV_GpFwumoXLigj4BSjF71YfRus";
       const mailRes = await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: {

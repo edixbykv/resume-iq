@@ -882,13 +882,6 @@ export default function BuilderPage() {
               </div>
             )}
 
-            {/* Debug Code Helper Toast */}
-            {debugOtp && (
-              <div className="bg-indigo-50 border border-indigo-100 text-indigo-800 text-xs rounded-lg p-3 text-center font-medium animate-bounce">
-                🔑 Testing OTP Code: <span className="font-bold text-sm tracking-wider">{debugOtp}</span>
-              </div>
-            )}
-
             {!otpSent ? (
               <div className="space-y-3">
                 <input
