@@ -12,7 +12,7 @@
     },
     "android": {
       "package": "com.kvai.resumeiq",
-      "versionCode": 1,
+      "versionCode": 2,
       "permissions": [
         "INTERNET"
       ],
@@ -29,8 +29,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "3bf693c7-9643-4a1a-8062-c3c07c5f4e76"
+        "projectId": "5bcfc1a2-9fa2-4ec8-9dfe-842ec2ff7514"
       }
-    }
+    },
+    "owner": "kvai"
   }
 }
