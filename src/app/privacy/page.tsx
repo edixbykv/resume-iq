@@ -57,12 +57,12 @@ export default function PrivacyPage() {
           <h2>6. Your rights</h2>
           <p>
             You have the right to access, correct, or delete your personal data.
-            To exercise these rights, sign in to your account or contact us at privacy@kvai.in.
+            To exercise these rights, sign in to your account or contact us at solutionskvai@gmail.com.
           </p>
 
           <h2>7. Contact</h2>
           <p>
-            For privacy-related inquiries, contact KVAI Solutions at privacy@kvai.in.
+            For privacy-related inquiries, contact KVAI Solutions at solutionskvai@gmail.com.
           </p>
         </div>
       </main>
