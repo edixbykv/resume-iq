@@ -38,7 +38,7 @@ export default function Home() {
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-grid [mask-image:radial-gradient(ellipse_at_top,black_30%,transparent_75%)]" />
-        <div className="pointer-events-none absolute -top-40 left-1/2 size-[680px] -translate-x-1/2 rounded-full bg-gradient-to-br from-violet-600/25 via-primary/15 to-indigo-500/10 blur-3xl animate-float" />
+        <div className="pointer-events-none absolute -top-40 left-1/2 size-[680px] -translate-x-1/2 rounded-full bg-primary/10 blur-3xl animate-float" />
 
         <div className="relative mx-auto max-w-7xl px-4 pb-20 pt-20 sm:px-6 sm:pt-28 lg:px-8">
           <motion.div initial="hidden" animate="show" className="mx-auto max-w-3xl text-center">
@@ -49,7 +49,7 @@ export default function Home() {
             </motion.div>
             <motion.h1 variants={fadeUp} custom={1} className="text-balance text-4xl font-bold tracking-tight sm:text-6xl">
               From Resume Creation to{" "}
-              <span className="bg-gradient-to-r from-violet-500 via-primary to-indigo-500 bg-clip-text text-transparent">
+              <span className="text-primary font-extrabold">
                 Landing Your Dream Job
               </span>
             </motion.h1>
@@ -139,7 +139,7 @@ export default function Home() {
               <motion.div key={s.title} variants={fadeUp} custom={i} initial="hidden" whileInView="show" viewport={{ once: true }}>
                 <Card className="relative h-full p-6">
                   <span className="absolute right-5 top-5 text-5xl font-bold text-muted/40">{i + 1}</span>
-                  <div className="grid size-11 place-items-center rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 text-white">
+                  <div className="grid size-11 place-items-center rounded-xl bg-primary text-primary-foreground">
                     <s.icon className="size-5" />
                   </div>
                   <h3 className="mt-4 font-semibold">{s.title}</h3>
@@ -155,7 +155,7 @@ export default function Home() {
 
       {/* CTA */}
       <section className="px-4 pb-24 sm:px-6 lg:px-8">
-        <div className="mx-auto max-w-5xl overflow-hidden rounded-3xl border border-primary/30 bg-gradient-to-br from-violet-600/15 via-primary/10 to-indigo-600/10 p-10 text-center sm:p-16">
+        <div className="mx-auto max-w-5xl overflow-hidden rounded-3xl border border-border bg-card p-10 text-center sm:p-16">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">See what recruiters really think.</h2>
           <p className="mx-auto mt-4 max-w-xl text-muted-foreground">Upload your resume and get a recruiter-grade verdict in under a minute.</p>
           <Button asChild variant="gradient" size="lg" className="mt-8">

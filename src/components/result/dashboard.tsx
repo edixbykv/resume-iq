@@ -107,7 +107,7 @@ export function Dashboard({ result, onReset }: { result: AnalysisResult; onReset
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <Card className="overflow-hidden">
-          <div className="relative bg-gradient-to-br from-violet-600/10 via-primary/5 to-indigo-600/10 p-6 sm:p-8">
+          <div className="relative bg-secondary/40 p-6 sm:p-8">
             <div className="flex flex-col items-center gap-6 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex flex-col items-center gap-5 sm:flex-row sm:text-left">
                 <ScoreRing score={result.overallScore} showGrade={result.grade} label="Overall" />

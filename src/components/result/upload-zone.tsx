@@ -70,7 +70,7 @@ export function UploadZone({
             className="hidden"
             onChange={(e) => handleFile(e.target.files?.[0] ?? undefined)}
           />
-          <div className="mx-auto grid size-16 place-items-center rounded-2xl bg-gradient-to-br from-violet-600/15 to-indigo-600/15 text-primary">
+          <div className="mx-auto grid size-16 place-items-center rounded-2xl bg-primary/10 text-primary">
             {loading ? <Loader2 className="size-7 animate-spin" /> : <UploadCloud className="size-7" />}
           </div>
           <h3 className="mt-5 text-lg font-semibold">

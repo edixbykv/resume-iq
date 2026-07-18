@@ -66,7 +66,7 @@ export function WebTools({ resumeScore, githubUrl }: { resumeScore: number; gith
     <div className="space-y-4">
       {/* Brand score */}
       <Card className="overflow-hidden">
-        <div className="grid gap-4 bg-gradient-to-br from-violet-600/10 to-indigo-600/10 p-6 sm:grid-cols-[auto_1fr] sm:items-center">
+        <div className="grid gap-4 bg-secondary/40 p-6 sm:grid-cols-[auto_1fr] sm:items-center">
           <ScoreRing score={brandScore} label="Brand Score" size={120} stroke={10} />
           <div>
             <h3 className="font-semibold">Personal Brand Score</h3>

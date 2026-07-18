@@ -207,7 +207,7 @@ export default function DashboardPage() {
   ) : (
     <Card className="p-5 bg-card border border-border hover:border-primary/20 transition-all shadow-md flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div className="flex items-center gap-4 min-w-0">
-        <div className="grid size-12 shrink-0 place-items-center rounded-lg bg-indigo-500/10 text-indigo-500 border border-indigo-500/10">
+        <div className="grid size-12 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary border border-primary/10">
           <FileText className="size-6" />
         </div>
         <div className="min-w-0">
@@ -289,9 +289,9 @@ export default function DashboardPage() {
               </div>
             </Card>
 
-            <Card className="p-5 bg-card border border-border hover:border-indigo-500/20 transition-all shadow-sm">
+            <Card className="p-5 bg-card border border-border hover:border-primary/20 transition-all shadow-sm">
               <div className="flex items-center gap-3">
-                <div className="grid size-10 place-items-center rounded-lg bg-indigo-500/10 text-indigo-500">
+                <div className="grid size-10 place-items-center rounded-lg bg-primary/10 text-primary">
                   <Briefcase className="size-5" />
                 </div>
                 <div>
@@ -301,9 +301,9 @@ export default function DashboardPage() {
               </div>
             </Card>
 
-            <Card className="p-5 bg-card border border-border hover:border-violet-500/20 transition-all shadow-sm">
+            <Card className="p-5 bg-card border border-border hover:border-accent/20 transition-all shadow-sm">
               <div className="flex items-center gap-3">
-                <div className="grid size-10 place-items-center rounded-lg bg-violet-500/10 text-violet-500">
+                <div className="grid size-10 place-items-center rounded-lg bg-accent/10 text-accent">
                   <User className="size-5" />
                 </div>
                 <div>
@@ -317,12 +317,12 @@ export default function DashboardPage() {
           </div>          {/* Resume Builder Document Section */}
           <div className="space-y-4">
             <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-              <Plus className="size-5 text-indigo-500" />
+              <Plus className="size-5 text-primary" />
               My Builder Resume
             </h2>
             {loadingBuilder ? (
               <div className="flex items-center justify-center py-6">
-                <Loader2 className="size-6 animate-spin text-indigo-500" />
+                <Loader2 className="size-6 animate-spin text-primary" />
               </div>
             ) : (
               builderCard
@@ -332,13 +332,13 @@ export default function DashboardPage() {
           {/* Saved analyses */}
           <div className="space-y-4">
             <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-              <FileText className="size-5 text-indigo-500" />
+              <FileText className="size-5 text-primary" />
               Saved Resume Reports
             </h2>
             
             {loading ? (
               <div className="flex items-center justify-center py-12">
-                <Loader2 className="size-6 animate-spin text-indigo-500" />
+                <Loader2 className="size-6 animate-spin text-primary" />
               </div>
             ) : resumes.length === 0 ? (
               <Card className="p-12 text-center bg-card border border-border border-dashed">
@@ -406,7 +406,7 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
-                  <Briefcase className="size-5 text-indigo-500" />
+                  <Briefcase className="size-5 text-primary" />
                   One-click Apply Tracker
                 </h2>
                 <p className="text-xs text-muted-foreground mt-1">
@@ -475,7 +475,7 @@ export default function DashboardPage() {
 
             {loadingApps ? (
               <div className="flex items-center justify-center py-10">
-                <Loader2 className="size-6 animate-spin text-indigo-500" />
+                <Loader2 className="size-6 animate-spin text-primary" />
               </div>
             ) : applications.length === 0 ? (
               <Card className="p-8 text-center text-muted-foreground border border-dashed border-border bg-card/50">
@@ -490,7 +490,7 @@ export default function DashboardPage() {
                   return (
                     <Card key={app.id} className="p-4 flex items-center justify-between gap-4 bg-card border border-border hover:border-primary/10 transition-all shadow-sm">
                       <div className="flex items-center gap-3">
-                        <div className="grid size-10 place-items-center rounded-lg bg-indigo-500/10 text-indigo-500 font-extrabold text-sm shrink-0 border border-indigo-500/10">
+                        <div className="grid size-10 place-items-center rounded-lg bg-primary/10 text-primary font-extrabold text-sm shrink-0 border border-primary/10">
                           {companyInitial}
                         </div>
                         <div>
