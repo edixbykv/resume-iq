@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { WebView } from 'react-native-webview';
-import { StyleSheet, SafeAreaView, Platform, StatusBar as RNStatusBar, View, Text, ActivityIndicator } from 'react-native';
+import { StyleSheet, SafeAreaView, Platform, StatusBar as RNStatusBar, View, Text, ActivityIndicator, BackHandler } from 'react-native';
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
+  const [canGoBack, setCanGoBack] = useState(false);
+  const webViewRef = useRef<WebView>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -12,6 +14,19 @@ export default function App() {
     }, 2500);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    const handleBackPress = () => {
+      if (webViewRef.current && canGoBack) {
+        webViewRef.current.goBack();
+        return true; // Prevents the default back action (closing the app)
+      }
+      return false; // default behavior (close app if no history)
+    };
+
+    const subscription = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+    return () => subscription.remove();
+  }, [canGoBack]);
 
   if (showSplash) {
     return (
@@ -35,12 +50,16 @@ export default function App() {
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
       <WebView
+        ref={webViewRef}
         source={{ uri: 'https://resume.kvai.in' }}
         javaScriptEnabled
         domStorageEnabled
         allowsFullscreenVideo
         sharedCookiesEnabled
         startInLoadingState
+        onNavigationStateChange={(navState) => {
+          setCanGoBack(navState.canGoBack);
+        }}
       />
     </SafeAreaView>
   );
