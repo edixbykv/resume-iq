@@ -57,20 +57,22 @@ export default function App() {
   }, [canGoBack]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="auto" />
-      <WebView
-        ref={webViewRef}
-        source={{ uri: 'https://resume.kvai.in' }}
-        javaScriptEnabled
-        domStorageEnabled
-        allowsFullscreenVideo
-        sharedCookiesEnabled
-        startInLoadingState
-        onNavigationStateChange={(navState) => {
-          setCanGoBack(navState.canGoBack);
-        }}
-      />
+    <View style={styles.rootContainer}>
+      <SafeAreaView style={styles.container}>
+        <StatusBar style="auto" />
+        <WebView
+          ref={webViewRef}
+          source={{ uri: 'https://resume.kvai.in' }}
+          javaScriptEnabled
+          domStorageEnabled
+          allowsFullscreenVideo
+          sharedCookiesEnabled
+          startInLoadingState
+          onNavigationStateChange={(navState) => {
+            setCanGoBack(navState.canGoBack);
+          }}
+        />
+      </SafeAreaView>
 
       {showSplash && (
         <Animated.View style={[styles.splashContainer, { opacity: containerFadeAnim }]}>
@@ -87,11 +89,15 @@ export default function App() {
           </View>
         </Animated.View>
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  rootContainer: {
+    flex: 1,
+    backgroundColor: '#030F26', // Brand navy blue background
+  },
   container: {
     flex: 1,
     backgroundColor: '#030F26', // Brand navy blue background
