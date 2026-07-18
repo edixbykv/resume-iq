@@ -1,17 +1,45 @@
 import { useState, useEffect, useRef } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { WebView } from 'react-native-webview';
-import { StyleSheet, SafeAreaView, Platform, StatusBar as RNStatusBar, View, Text, ActivityIndicator, BackHandler } from 'react-native';
+import { StyleSheet, SafeAreaView, Platform, StatusBar as RNStatusBar, View, Animated, Image, ActivityIndicator, BackHandler } from 'react-native';
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
   const [canGoBack, setCanGoBack] = useState(false);
   const webViewRef = useRef<WebView>(null);
 
+  // Animated variables for splash screen transition
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(0.4)).current;
+  const containerFadeAnim = useRef(new Animated.Value(1)).current;
+
   useEffect(() => {
+    // 1. Entrance animation (fade in and scale up the brand icon)
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 800,
+        useNativeDriver: true,
+      }),
+      Animated.spring(scaleAnim, {
+        toValue: 1,
+        friction: 6,
+        tension: 40,
+        useNativeDriver: true,
+      })
+    ]).start();
+
+    // 2. Exit animation (smooth fade out of the overlay)
     const timer = setTimeout(() => {
-      setShowSplash(false);
-    }, 2500);
+      Animated.timing(containerFadeAnim, {
+        toValue: 0,
+        duration: 500,
+        useNativeDriver: true,
+      }).start(() => {
+        setShowSplash(false);
+      });
+    }, 2400);
+
     return () => clearTimeout(timer);
   }, []);
 
@@ -19,32 +47,14 @@ export default function App() {
     const handleBackPress = () => {
       if (webViewRef.current && canGoBack) {
         webViewRef.current.goBack();
-        return true; // Prevents the default back action (closing the app)
+        return true; // Prevents default back (closing the app)
       }
-      return false; // default behavior (close app if no history)
+      return false; // Closes the app if on home screen
     };
 
     const subscription = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
     return () => subscription.remove();
   }, [canGoBack]);
-
-  if (showSplash) {
-    return (
-      <View style={styles.splashContainer}>
-        <StatusBar style="light" />
-        <View style={styles.splashContent}>
-          <View style={styles.logoBadge}>
-            <Text style={styles.logoText}>ResumeIQ</Text>
-          </View>
-          <Text style={styles.tagline}>AI Resume Intelligence</Text>
-          <ActivityIndicator size="small" color="#6366f1" style={styles.loader} />
-        </View>
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>build by kvai.in</Text>
-        </View>
-      </View>
-    );
-  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -61,6 +71,22 @@ export default function App() {
           setCanGoBack(navState.canGoBack);
         }}
       />
+
+      {showSplash && (
+        <Animated.View style={[styles.splashContainer, { opacity: containerFadeAnim }]}>
+          <StatusBar style="light" />
+          <View style={styles.splashContent}>
+            <Animated.View style={{ transform: [{ scale: scaleAnim }], opacity: fadeAnim }}>
+              <Image 
+                source={require('./assets/splash-icon.png')} 
+                style={styles.logoImage} 
+                resizeMode="contain"
+              />
+            </Animated.View>
+            <ActivityIndicator size="small" color="#EAB308" style={styles.loader} />
+          </View>
+        </Animated.View>
+      )}
     </SafeAreaView>
   );
 }
@@ -68,57 +94,26 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#030F26', // Brand navy blue background
     paddingTop: Platform.OS === 'android' ? RNStatusBar.currentHeight : 0,
   },
   splashContainer: {
-    flex: 1,
-    backgroundColor: '#0f172a',
-    justifyContent: 'space-between',
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: '#030F26', // Brand navy blue background
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 50,
+    zIndex: 9999,
   },
   splashContent: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  logoBadge: {
-    backgroundColor: '#1e1b4b',
-    borderWidth: 1,
-    borderColor: '#4338ca',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 16,
-    shadowColor: '#6366f1',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 8,
-  },
-  logoText: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#ffffff',
-    letterSpacing: 1,
-  },
-  tagline: {
-    fontSize: 14,
-    color: '#94a3b8',
-    marginTop: 12,
-    letterSpacing: 2,
-    textTransform: 'uppercase',
+  logoImage: {
+    width: 220,
+    height: 220,
   },
   loader: {
-    marginTop: 30,
-  },
-  footer: {
-    alignItems: 'center',
-  },
-  footerText: {
-    fontSize: 12,
-    color: '#64748b',
-    letterSpacing: 1,
+    marginTop: 35,
   },
 });
 
