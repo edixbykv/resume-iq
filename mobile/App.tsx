@@ -8,40 +8,38 @@ export default function App() {
   const [canGoBack, setCanGoBack] = useState(false);
   const webViewRef = useRef<WebView>(null);
 
-  // Animated variables for splash screen transition
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const scaleAnim = useRef(new Animated.Value(0.4)).current;
+  const [pageLoaded, setPageLoaded] = useState(false);
+  const [minTimeDone, setMinTimeDone] = useState(false);
+
+  // Splash overlay picks up exactly where the native splash leaves off (same logo, same spot)
+  const loaderFadeAnim = useRef(new Animated.Value(0)).current;
   const containerFadeAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    // 1. Entrance animation (fade in and scale up the brand icon)
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 800,
-        useNativeDriver: true,
-      }),
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        friction: 6,
-        tension: 40,
-        useNativeDriver: true,
-      })
-    ]).start();
+    Animated.timing(loaderFadeAnim, {
+      toValue: 1,
+      duration: 400,
+      delay: 300,
+      useNativeDriver: true,
+    }).start();
 
-    // 2. Exit animation (smooth fade out of the overlay)
-    const timer = setTimeout(() => {
-      Animated.timing(containerFadeAnim, {
-        toValue: 0,
-        duration: 500,
-        useNativeDriver: true,
-      }).start(() => {
-        setShowSplash(false);
-      });
-    }, 2400);
-
-    return () => clearTimeout(timer);
+    const minTimer = setTimeout(() => setMinTimeDone(true), 1200);
+    // Never hold the user on the splash if the site is slow or offline
+    const maxTimer = setTimeout(() => setPageLoaded(true), 8000);
+    return () => {
+      clearTimeout(minTimer);
+      clearTimeout(maxTimer);
+    };
   }, []);
+
+  useEffect(() => {
+    if (!showSplash || !pageLoaded || !minTimeDone) return;
+    Animated.timing(containerFadeAnim, {
+      toValue: 0,
+      duration: 400,
+      useNativeDriver: true,
+    }).start(() => setShowSplash(false));
+  }, [pageLoaded, minTimeDone]);
 
   useEffect(() => {
     const handleBackPress = () => {
@@ -59,7 +57,7 @@ export default function App() {
   return (
     <View style={styles.rootContainer}>
       <SafeAreaView style={styles.container}>
-        <StatusBar style="auto" />
+        <StatusBar style="light" />
         <WebView
           ref={webViewRef}
           source={{ uri: 'https://resume.kvai.in' }}
@@ -71,22 +69,21 @@ export default function App() {
           onNavigationStateChange={(navState) => {
             setCanGoBack(navState.canGoBack);
           }}
+          onLoadEnd={() => setPageLoaded(true)}
         />
       </SafeAreaView>
 
       {showSplash && (
         <Animated.View style={[styles.splashContainer, { opacity: containerFadeAnim }]}>
           <StatusBar style="light" />
-          <View style={styles.splashContent}>
-            <Animated.View style={{ transform: [{ scale: scaleAnim }], opacity: fadeAnim }}>
-              <Image 
-                source={require('./assets/splash-icon.png')} 
-                style={styles.logoImage} 
-                resizeMode="contain"
-              />
-            </Animated.View>
-            <ActivityIndicator size="small" color="#EAB308" style={styles.loader} />
-          </View>
+          <Image
+            source={require('./assets/splash-logo.png')}
+            style={styles.logoImage}
+            resizeMode="contain"
+          />
+          <Animated.View style={[styles.loader, { opacity: loaderFadeAnim }]}>
+            <ActivityIndicator size="small" color="#EAB308" />
+          </Animated.View>
         </Animated.View>
       )}
     </View>
@@ -104,22 +101,20 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'android' ? RNStatusBar.currentHeight : 0,
   },
   splashContainer: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: '#030F26', // Brand navy blue background
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 9999,
   },
-  splashContent: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  // Same 288dp box as the Android splash icon, so the logo does not move
   logoImage: {
-    width: 220,
-    height: 220,
+    width: 288,
+    height: 288,
   },
   loader: {
-    marginTop: 35,
+    position: 'absolute',
+    bottom: '22%',
   },
 });
 
