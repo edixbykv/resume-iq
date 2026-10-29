@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { WebView } from 'react-native-webview';
-import { StyleSheet, SafeAreaView, Platform, StatusBar as RNStatusBar, View, Animated, Image, ActivityIndicator, BackHandler } from 'react-native';
+import { StyleSheet, SafeAreaView, Platform, StatusBar as RNStatusBar, View, Animated, Image, ActivityIndicator, BackHandler, Text, Pressable } from 'react-native';
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
@@ -10,6 +10,18 @@ export default function App() {
 
   const [pageLoaded, setPageLoaded] = useState(false);
   const [minTimeDone, setMinTimeDone] = useState(false);
+
+  // Offline or a failed load shows our own screen instead of a blank WebView
+  const [loadError, setLoadError] = useState(false);
+  const [retrying, setRetrying] = useState(false);
+  // Changing the key remounts the WebView, e.g. after Android kills its renderer
+  const [webKey, setWebKey] = useState(0);
+
+  const retry = () => {
+    setRetrying(true);
+    setLoadError(false);
+    setWebKey((k) => k + 1);
+  };
 
   // Splash overlay picks up exactly where the native splash leaves off (same logo, same spot)
   const loaderFadeAnim = useRef(new Animated.Value(0)).current;
@@ -59,6 +71,7 @@ export default function App() {
       <SafeAreaView style={styles.container}>
         <StatusBar style="light" />
         <WebView
+          key={webKey}
           ref={webViewRef}
           source={{ uri: 'https://resume.kvai.in' }}
           javaScriptEnabled
@@ -69,9 +82,38 @@ export default function App() {
           onNavigationStateChange={(navState) => {
             setCanGoBack(navState.canGoBack);
           }}
-          onLoadEnd={() => setPageLoaded(true)}
+          onLoadEnd={() => {
+            setPageLoaded(true);
+            setRetrying(false);
+          }}
+          onError={() => setLoadError(true)}
+          renderError={() => <View style={styles.rootContainer} />}
+          onRenderProcessGone={() => setWebKey((k) => k + 1)}
         />
       </SafeAreaView>
+
+      {loadError && (
+        <View style={styles.errorContainer}>
+          <Image
+            source={require('./assets/splash-logo.png')}
+            style={styles.errorLogo}
+            resizeMode="contain"
+          />
+          <Text style={styles.errorTitle}>No Internet Connection</Text>
+          <Text style={styles.errorText}>Check your Wi-Fi or mobile data and try again.</Text>
+          <Pressable
+            onPress={retry}
+            disabled={retrying}
+            style={({ pressed }) => [styles.retryButton, pressed && styles.retryButtonPressed]}
+          >
+            {retrying ? (
+              <ActivityIndicator size="small" color="#030F26" />
+            ) : (
+              <Text style={styles.retryText}>Try Again</Text>
+            )}
+          </Pressable>
+        </View>
+      )}
 
       {showSplash && (
         <Animated.View style={[styles.splashContainer, { opacity: containerFadeAnim }]}>
@@ -115,6 +157,48 @@ const styles = StyleSheet.create({
   loader: {
     position: 'absolute',
     bottom: '22%',
+  },
+  errorContainer: {
+    ...StyleSheet.absoluteFill,
+    backgroundColor: '#030F26',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 32,
+  },
+  errorLogo: {
+    width: 160,
+    height: 160,
+  },
+  errorTitle: {
+    color: '#FFFFFF',
+    fontSize: 22,
+    fontWeight: '700',
+    marginTop: 8,
+    textAlign: 'center',
+  },
+  errorText: {
+    color: '#94A3B8',
+    fontSize: 15,
+    lineHeight: 22,
+    marginTop: 8,
+    textAlign: 'center',
+  },
+  retryButton: {
+    backgroundColor: '#FACC15',
+    borderRadius: 14,
+    minWidth: 180,
+    height: 50,
+    marginTop: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  retryButtonPressed: {
+    opacity: 0.85,
+  },
+  retryText: {
+    color: '#030F26',
+    fontSize: 16,
+    fontWeight: '700',
   },
 });
 
