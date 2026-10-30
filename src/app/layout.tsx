@@ -7,23 +7,60 @@ import { SessionProvider } from "@/components/site/session-provider";
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
+// The title carries the same name as the Play listing ("ResumeIQ: AI Resume Analyzer") so a search
+// for the app name finds the site too.
+const TITLE = "ResumeIQ: AI Resume Analyzer and ATS Score Checker";
+const DESCRIPTION =
+  "ResumeIQ is a free AI resume analyzer by KVai Solutions. Get your ATS score, see how a recruiter reads your resume, match it to a job and download a report.";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://resume.kvai.in"),
   title: {
-    default: "ResumeIQ — AI Resume Intelligence Platform",
+    default: TITLE,
     template: "%s · ResumeIQ",
   },
-  description:
-    "Career intelligence for your resume: ATS scoring, recruiter simulation, job-match analysis, salary intelligence, skill-gap planning, and a downloadable report. By KVAI Solutions.",
-  keywords: ["resume checker", "ATS score", "recruiter simulation", "resume analyzer", "career intelligence", "KVAI"],
-  authors: [{ name: "KVAI Solutions" }],
+  description: DESCRIPTION,
+  applicationName: "ResumeIQ",
+  keywords: [
+    "resumeiq", "resume iq", "ai resume analyzer", "resume analyzer", "ats score checker", "resume checker",
+    "ai resume review", "resume review", "job match", "kvai",
+  ],
+  authors: [{ name: "KVai Solutions", url: "https://www.kvai.in" }],
+  alternates: { canonical: "/" },
+  robots: { index: true, follow: true },
   openGraph: {
-    title: "ResumeIQ — AI Resume Intelligence Platform",
-    description: "Recruiter-grade analysis of your resume in seconds.",
+    title: TITLE,
+    description: DESCRIPTION,
     url: "https://resume.kvai.in",
     siteName: "ResumeIQ",
     type: "website",
   },
+  twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION },
+};
+
+// Tells Google what ResumeIQ is and who makes it, so the brand search has something to match.
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "@id": "https://resume.kvai.in/#app",
+      name: "ResumeIQ",
+      alternateName: ["Resume IQ", "ResumeIQ: AI Resume Analyzer"],
+      url: "https://resume.kvai.in",
+      description: DESCRIPTION,
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Any web browser, Android",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "INR" },
+      publisher: { "@id": "https://www.kvai.in/#organization" },
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://www.kvai.in/#organization",
+      name: "KVai Solutions",
+      url: "https://www.kvai.in",
+    },
+  ],
 };
 
 export const viewport: Viewport = {
@@ -39,6 +76,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} h-full`}>
       <body className="min-h-full antialiased">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           <SessionProvider>
             {children}
